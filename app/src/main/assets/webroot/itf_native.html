@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+  <title>test</title>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+  <meta name="format-detection" content="telephone=no"/>
+  <meta name="format-detection" content="email=no"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0"/>
+  <style>
+  button{
+  		width:200px;
+  		height:30px;
+  		margin:10px;
+  		border:1px solid #aaa;
+  		text-align:center;
+  }
+  li{
+  	list-style: none;
+  }
+  </style>
+    <script src="itf_native.js"></script>
+</head>
+<body>
+<div id="content">
+  <ul>
+    <li>Result: <span id="Result"></span></li>
+    <li>UserAgent: <span id="userAgent"></span></li>
+
+      <li><a href="./itf_native.html">anchor test</a></li>
+
+      <li>
+          <button onclick="onAttach()">onAttach</button>
+      </li>
+      <li>
+          <button onclick="ItfNative.postMessage('xxxxx')">postMessage</button>
+      </li>
+      <li>
+          <button onclick="getPlatformType()">getPlatformType</button>
+      </li>
+      <li>
+          <button onclick="ItfNative.showAlertWithTitleMessage('a','b')">showAlert</button>
+      </li>
+      <li>
+          <button onclick="log()">log</button>
+      </li>
+      <li>
+          <button onclick="vibrate()">vibrate</button>
+      </li>
+      <li>
+          <button onclick="ItfNative.setVariableWithKeyValue('test','a')">setVariable</button>
+      </li>
+      <li>
+          <button onclick="getVariable()">getVariable</button>
+      </li>
+      <li>
+          <button onclick="ItfNative.savePersistenceWithKeyValue('test','b')">savePersistenceValue
+          </button>
+      </li>
+      <li>
+          <button onclick="getPersistenceValue()">getPersistenceValue</button>
+      </li>
+      <li>
+          <button onclick="presentView()">presentView</button>
+      </li>
+      <li>
+          <button onclick="pushView()">pushView</button>
+      </li>
+      <li>
+          <button onclick="ItfNative.loadView('http://www.sina.com.cn/')">loadView</button>
+      </li>
+      <li>
+          <button onclick="closePresentView()">closePresentView</button>
+      </li>
+      <li>
+          <button onclick="popView()">popView</button>
+      </li>
+      <li>
+          <button onclick="setViewTitle()">setViewTitle</button>
+      </li>
+      <li>
+          <button onclick="setViewTitleImage()">setViewTitleImage</button>
+      </li>
+      <li>
+          <button onclick="getGeoLocation()">getGeoLocation</button>
+      </li>
+      <li>
+          <button onclick="showImageViewer()">showImageViewer</button>
+      </li>
+      <li>
+          <button onclick="showImagesViewer()">showImagesViewer</button>
+      </li>
+      <li>
+          <button onclick="setViewTitles()">setViewTitles</button>
+      </li>
+      <li>
+          <button onclick="scanQRCode()">scanQRCode</button>
+      </li>
+
+
+      <li>
+          <button onclick="setNavRightButtons()">setNavRightButtons</button>
+      </li>
+
+      <li>
+          <button onclick="setNavRightButton()">setNavRightButton</button>
+      </li>
+      <li>
+          <button onclick="setNavRightButtonImage()">setNavRightButtonImage</button>
+      </li>
+      <li>
+          <button onclick="ItfNative.setNavRightButtonEnabled(false)">
+              setNavRightButtonEnabled(false)
+          </button>
+      </li>
+      <li>
+          <button onclick="ItfNative.setNavRightButtonEnabled(true)">
+              setNavRightButtonEnabled(true)
+          </button>
+      </li>
+      <li>
+          <button onclick="ItfNative.removeNavRightButton()">removeNavRightButton</button>
+      </li>
+
+
+      <li>
+          <button onclick="setNavLeftButton()">setNavLeftButton</button>
+      </li>
+      <li>
+          <button onclick="setNavLeftButtonImage()">setNavLeftButtonImage</button>
+      </li>
+      <li>
+          <button onclick="ItfNative.setNavLeftButtonEnabled(false)">
+              setNavLeftButtonEnabled(false)
+          </button>
+      </li>
+      <li>
+          <button onclick="ItfNative.setNavLeftButtonEnabled(true)">setNavLeftButtonEnabled(true)
+          </button>
+      </li>
+      <li>
+          <button onclick="ItfNative.removeNavLeftButton();">removeNavLeftButton</button>
+      </li>
+
+
+      <li>
+          <button onclick="uploadAlbumImage()">uploadAlbumImage</button>
+      </li>
+
+      <li>
+          <button onclick="uploadCameraImage()">uploadCameraImage</button>
+      </li>
+      <li>
+          <button onclick="uploadImageWithUrl()">uploadImageWithUrl</button>
+      </li>
+
+      <li>
+          <button onclick="uploadCameraVideoWithUrl()">uploadCameraVideoWithUrl</button>
+      </li>
+
+      <li>
+          <button onclick="showAddressBookPeoplePicker()">showAddressBookPeoplePicker</button>
+      </li>
+      <li>
+          <button onclick="systemOpenUrl()">systemOpenUrl</button>
+      </li>
+      <li>
+          <button onclick="showMapViewer()">showMapViewer</button>
+      </li>
+
+      <li>
+          <button onclick="systemOpenAppSettings()">systemOpenAppSettings</button>
+      </li>
+
+      <li>
+          <button onclick="ItfNative.setEnableBounces(true)">itf.setEnableBounces(true)</button>
+      </li>
+      <li>
+          <button onclick="ItfNative.setEnableBounces(false)">itf.setEnableBounces(false)</button>
+      </li>
+      <li>
+          <button onclick="ItfNative.setBackgroundColor(0xff0000)">itf.setBackgroundColor</button>
+      </li>
+
+      <li>
+          <button onclick='ItfNative.showActionSheetWithTitleMessageActionsCallback("标题","描述",["选项1","选项2"],"actionCallback")'>
+              showActionSheet
+          </button>
+      </li>
+
+      <li>
+          <button onclick="ItfNative.setNavBarVisible(false)">itf.setNavBarVisible(false)</button>
+      </li>
+      <li>
+          <button onclick="ItfNative.setNavBarVisible(true)">itf.setNavBarVisible(true)</button>
+      </li>
+      <li>
+          <button onclick="listDirectory()">listDirectory</button>
+      </li>
+      <li>
+          <button onclick="ItfNative.clearDocumentDirectory('www')">itf.clearDocumentDirectory
+          </button>
+      </li>
+      <li>
+          <button onclick="ItfNative.removeDocumentDirectory('www')">itf.removeDocumentDirectory
+          </button>
+      </li>
+
+      <li>
+          <button onclick="clearCacheDir()">itf.clearCacheDirectory</button>
+      </li>
+
+      <li>
+          <button onclick="getCacheSize()">itf.getCacheDirectorySize</button>
+      </li>
+
+
+      <li>
+          <button onclick="ItfNative.toast('toast message')">itf.toast</button>
+      </li>
+
+      <li>
+          <button onclick="getCurrentVersion()">getCurrentVersion</button>
+      </li>
+      <li>
+          <button onclick="getSessionId()">getSessionId</button>
+      </li>
+
+      <li>
+          <button onclick="databaseExecute()">databaseExecute</button>
+      </li>
+      <li>
+          <button onclick="databaseQuery()">databaseQuery</button>
+      </li>
+
+      <li>
+          <button onclick="showRecordViewWithUrl()">showRecordViewWithUrl</button>
+      </li>
+      <li>
+          <button onclick="startRecord()">startRecord</button>
+      </li>
+      <li>
+          <button onclick="stopRecord()">stopRecord</button>
+      </li>
+      <li>
+          <button onclick="onVoiceRecordEnd()">onVoiceRecordEnd</button>
+      </li>
+      <li>
+          <button onclick="playVoice()">playVoice</button>
+      </li>
+      <li>
+          <button onclick="pauseVoice()">pauseVoice</button>
+      </li>
+      <li>
+          <button onclick="stopVoice()">stopVoice</button>
+      </li>
+      <li>
+          <button onclick="onVoicePlayEnd()">onVoicePlayEnd</button>
+      </li>
+      <li>
+          <button onclick="uploadVoiceWithUrl()">uploadVoiceWithUrl</button>
+      </li>
+
+      <li>
+          <button onclick="weixinLogin()">weixinLogin</button>
+      </li>
+      <li>
+          <button onclick="weixinLogout()">weixinLogout</button>
+      </li>
+      <li>
+          <button onclick="weixinPay()">weixinPay</button>
+      </li>
+      <li>
+          <button onclick="aliPay()">aliPay</button>
+      </li>
+      <li>
+          <button onclick="socialShare()">socialShare</button>
+      </li>
+
+      <li>
+          <button onclick="ItfNative.setApplicationIconBadgeNumber(1)">
+              setApplicationIconBadgeNumber
+          </button>
+      </li>
+      <li>
+          <button onclick="ItfNative.setTabBarBadge('a')">setTabBarBadge</button>
+      </li>
+
+
+  </ul>
+</div>
+<script>
+
+function onITFNativeLoaded(){
+    showInfo("onITFNativeLoaded");
+    ItfNative.log("onITFNativeLoaded");
+    ItfNative.setMessageCallback("messageCallback");
+}
+//
+function messageCallback(msg){
+      showInfo("messageCallback:"+msg);
+}
+//
+function showInfo(s){
+    document.getElementById("Result").innerHTML=s+"";
+}
+//
+function getPlatformType(){
+    showInfo(ItfNative.getPlatformType());
+}
+
+//
+function log(){
+    ItfNative.log("456");
+}
+//
+function vibrate(){
+    ItfNative.vibrate();
+}
+
+//
+function getVariable(){
+    var t=ItfNative.getVariable("test");
+     showInfo("GetVariable:"+t);
+}
+//
+//
+function getPersistenceValue(){
+    var t=ItfNative.getPersistence("test");
+    showInfo("PersistenceGet:"+t);}
+
+
+function pushView(){
+    ItfNative.pushView("index.html");
+}
+
+function popView(){
+     ItfNative.popView();
+}
+
+function presentView(){
+    ItfNative.presentView("index.html");
+}
+
+function closePresentView(){
+    ItfNative.closePresentView();
+}
+
+function setViewTitle(){
+    ItfNative.setViewTitle("ViewTitle-"+new Date().getTime());
+}
+//
+function setViewTitleImage(){
+     ItfNative.setViewTitleImage("www/logo.png");
+}
+//
+function getGeoLocation(){
+    ItfNative.getGeoLocation("getGeoLocationCallback");
+}
+//
+function getGeoLocationCallback(loc){
+    showInfo("getGeoLocationCallback:"+JSON.stringify(loc));
+}
+//
+
+function showImageViewer(){
+    ItfNative.showImageViewer("http://www.baidu.com/img/bd_logo1.png");
+}
+//
+function showImagesViewer(){
+    ItfNative.showImagesViewer(["http://www.baidu.com/img/bd_logo1.png","http://pic.qiantucdn.com/58pic/17/95/73/00a58PICQPB_1024.jpg"]);
+}
+//
+function setViewTitles(){
+    ItfNative.setViewWithTitlesCallback(["1","2","3","4"],"setViewTitlesCallback");
+}
+//
+function setViewTitlesCallback(e){
+    showInfo("setViewTitlesCallback:"+e);
+}
+//
+function scanQRCode(){
+    ItfNative.scanQRCode("scanQRCodeCallback");
+}
+//
+function scanQRCodeCallback(s){
+    showInfo("scanQRCodeCallback:"+s);
+}
+
+function setNavRightButtons(){
+    ItfNative.setNavRightButtonsWithTitlesTypes(["scan","gear"],["image","image"],"setRightButtonCallback");
+}
+//
+function setNavRightButton(){
+    ItfNative.setNavRightButtonWithTitleCallback("Button","setRightButtonCallback");
+}
+//
+function setNavRightButtonImage(){
+    ItfNative.setNavRightButtonWithImageCallback("gear","setRightButtonCallback");
+}
+//
+function setRightButtonCallback(id){
+    showInfo("setRightButtonCallback:"+id);
+}
+
+//
+//
+function setNavLeftButton(){
+    ItfNative.setNavLeftButtonWithTitleCallback("Button","setLeftButtonCallback");
+}
+//
+function setNavLeftButtonImage(){
+    ItfNative.setNavLeftButtonWithImageCallback("gear","setLeftButtonCallback");
+}
+//
+function setLeftButtonCallback(){
+    showInfo("setLeftButtonCallback");
+}
+
+
+//
+function uploadAlbumImage(){
+    ItfNative.uploadAlbumImageWithUrl(
+                         "http://uat.itit.io:9203/p/attach/upload_image",
+                         "uploadImageCallback");
+}
+function uploadAlbumImageLocal(){
+    ItfNative.uploadAlbumImageWithUrl("","uploadImageCallbackLocal");
+}
+//
+function uploadCameraImage(){
+    ItfNative.uploadCameraImageWithUrl("http://uat.itit.io:9203/p/attach/upload_image",
+                         "uploadImageCallback");
+
+}
+//
+function uploadImageWithUrl(){
+    ItfNative.uploadImageWithUrl("http://uat.itit.io:9203/p/attach/upload_image",
+                                       "uploadImageCallback");
+}
+
+function uploadImageCallback(e){
+    showInfo("uploadImageCallback:"+e);
+}
+//
+function uploadCameraVideoWithUrl(){
+    ItfNative.uploadCameraVideoWithUrl("http://uat.itit.io:9203/p/attach/upload_attach","uploadVideoCallback");
+}
+
+function uploadVideoCallback(e){
+    showInfo("uploadVideoCallback:"+e);
+}
+//
+function onAttach(){
+    ItfNative.onAttach("onAttachCallback");
+
+}
+var onAttachCount=1;
+function onAttachCallback(){
+    showInfo("onAttachCallback"+onAttachCount++);
+}
+//
+
+//
+function systemOpenUrl(){
+    var url="iosamap://navi?sourceApplication=itf&backScheme=itf&poiname=fangheng&poiid=BGVIS&lat=36.547901&lon=104.258354&dev=1&style=2"
+    ItfNative.systemOpenURL(url);
+}
+
+//
+function showAddressBookPeoplePicker(){
+    ItfNative.showAddressBookPeoplePicker("showAddressBookPeoplePickerCallback");
+}
+//
+function showAddressBookPeoplePickerCallback(person){
+    showInfo("getGeoLocationCallback:"+JSON.stringify(person));
+}
+//
+function showMapViewer(){
+    ItfNative.showMapViewerWithTitleRemarkLatitudeLongitude("标题","软件园一期",22.54524,113.93876);
+}
+//
+function systemOpenAppSettings(){
+    ItfNative.systemOpenAppSettings();
+}
+//
+function actionCallback(s){
+    showInfo("actionCallback"+s);
+}
+//
+function listDirectory(){
+    var ss=ItfNative.listDirectory();
+    showInfo(ss+"");
+}
+//
+function getCurrentVersion(){
+   var sss=""+ItfNative.getCurrentWWWVersion();
+   showInfo(sss+"");
+}
+
+//
+function getSessionId(){
+    var sss=""+ItfNative.getSessionId();
+    showInfo(sss+"");
+}
+//
+
+function databaseQuery(){
+    var s=ItfNative.databaseQuery("select * from test");
+    showInfo(JSON.stringify(s));
+}
+//
+
+function databaseExecute(){
+    var s=ItfNative.databaseExecute("insert into test values(2)");
+    showInfo(s);
+}
+//
+function showRecordViewWithUrl(){
+    ItfNative.showRecordViewWithUrl("http://uat.itit.io:9203/p/attach/upload_attach","uploadVoiceCallback")
+}
+//
+function startRecord(){
+    ItfNative.startRecord()
+}
+//
+function stopRecord(){
+    var localId=""+ItfNative.stopRecord();
+    showInfo(localId);
+}
+//
+function onVoiceRecordEnd(){
+    ItfNative.onVoiceRecordEnd("onVoiceRecordEndCallBack")
+}
+//
+function onVoiceRecordEndCallBack(data){
+    var ret=JSON.stringify(data);
+    showInfo("onVoiceRecordEndCallBack ret:"+ret);
+}
+//
+function playVoice(){
+    ItfNative.playVoice("")
+}
+//
+function pauseVoice(){
+    ItfNative.pauseVoice("")
+}
+//
+function stopVoice(){
+    ItfNative.stopVoice("")
+}
+//
+function uploadVoiceWithUrl(){
+    ItfNative.uploadVoiceWithUrl("http://uat.itit.io:9203/p/attach/upload_attach",
+                                 "uploadVoiceCallback");
+}
+function uploadVoiceCallback(e){
+    showInfo("uploadVoiceCallback:"+e);
+}
+//
+function onVoicePlayEnd(){
+    ItfNative.onVoicePlayEnd("onVoicePlayEndCallBack")
+}
+//
+function onVoicePlayEndCallBack(data){
+    var ret=JSON.stringify(data);
+    showInfo("onVoicePlayEndCallBack ret:"+ret);
+}
+//
+function weixinLogin(){
+    ItfNative.weixinLogin("weixinLoginCallback")
+}
+//
+function weixinLoginCallback(data){
+    var ret=JSON.stringify(data);
+    showInfo(ret);
+}
+//
+function weixinLogout(){
+    ItfNative.weixinLogout("weixinLogoutCallback")
+}
+//
+function weixinLogoutCallback(data){
+    var ret=JSON.stringify(data);
+    showInfo(ret);
+}
+//
+function weixinPay(){
+    ItfNative.weixinPay("http://uat.itit.io/p/api/app_wx_order","weixinPayCallback");
+}
+//
+function weixinPayCallback(data){
+    var ret=JSON.stringify(data);
+    showInfo(ret);
+}
+//
+function aliPay(){
+    ItfNative.aliPay("http://uat.itit.io/p/api/app_alipay_order","123","aliPayCallback");
+}
+//
+function aliPayCallback(data){
+    var ret=JSON.stringify(data);
+    showInfo(ret);
+}
+//
+function socialShare(){
+    ItfNative.socialShare("ITIT","text","http://io.itit.io","http://io.itit.io/logo.png","socialShareCallback")
+}
+//
+function socialShareCallback(data){
+    var ret=JSON.stringify(data);
+    showInfo(ret);
+}
+//
+function clearCacheDir(){
+    ItfNative.clearCacheDirectory('clearCallback');
+}
+//
+function clearCallback(){
+    showInfo("clearCacheDone");
+}
+function getCacheSize(){
+    ItfNative.getCacheDirectorySize('getCacheSizeCallback');
+}
+//
+function getCacheSizeCallback(size){
+    showInfo("getCacheSizeCallback:"+size);
+}
+//
+</script>
+</body>
+</html>
