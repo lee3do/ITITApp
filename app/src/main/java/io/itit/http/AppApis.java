@@ -24,6 +24,9 @@ public interface AppApis {
     @GET("srv/feed/like/{uuid}/{index}")
     Observable<Item> getLikes(@Path("uuid") String uuid, @Path("index") int index);
 
+    @GET("srv/feed/search/user/0?q={query}/{index}")
+    Observable<Item> search(@Path("query") String query, @Path("index") int index);
+
     @POST("srv/feed/device/{id}")
     Call<ResponseBody> register(@Path("id") String id);
 
@@ -43,6 +46,8 @@ public interface AppApis {
 
     @GET("srv/feed/islikeit/{uuid}/{id}")
     Observable<Fav> isFav(@Path("uuid") String uuid, @Path("id") int id);
+
+    //	public static final String SEARCH_URL = "http://itit.io:7001/srv/feed/search/user/0?q=";
 
 
     @GET()
