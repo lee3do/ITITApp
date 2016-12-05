@@ -16,10 +16,14 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import cn.trinea.android.common.util.StringUtils;
 import io.itit.ITITApplication;
 import io.itit.R;
 import io.itit.WrapperActivity;
@@ -40,7 +44,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             (true).build();
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
-    public NewsAdapter(List<Item.ItemsBean> newsList,Context context) {
+    public NewsAdapter(List<Item.ItemsBean> newsList, Context context) {
         this.newsList = newsList;
         this.mContext = context;
         setHasStableIds(true);
@@ -55,7 +59,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
     }
 
     public void updateNewsList(List<Item.ItemsBean> newsList, boolean reCreate) {
-        setNewsList(newsList,reCreate);
+        setNewsList(newsList, reCreate);
         notifyDataSetChanged();
     }
 
@@ -81,14 +85,21 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
 
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
-        Item.ItemsBean dailyNews = newsList.get(position);
-        imageLoader.displayImage(iconUrl + dailyNews.getProviderId(), holder.newsImage, options,
+        Item.ItemsBean item = newsList.get(position);
+        imageLoader.displayImage(iconUrl + item.getProviderId(), holder.newsImage, options,
                 animateFirstListener);
 
-        holder.questionTitle.setText(dailyNews.getTitle());
-        holder.authorText.setText(dailyNews.getAuthor());
-        holder.readNumText.setText(dailyNews.getViewCount()+"");
-        holder.dailyTitle.setText(dailyNews.getDesc());
+        holder.title.setText(item.getTitle());
+        DateFormat df = SimpleDateFormat.getDateInstance();
+        holder.time.setText(df.format(new Date(item.getFetchDate())));
+        holder.authorText.setText(item.getAuthor());
+        holder.readNumText.setText(item.getViewCount() + "");
+        if (StringUtils.isEmpty(item.getDesc())) {
+            holder.content.setVisibility(View.GONE);
+        } else {
+            holder.content.setVisibility(View.VISIBLE);
+            holder.content.setText(item.getDesc());
+        }
     }
 
     @Override
@@ -104,7 +115,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
     private void browse(Context context, int position) {
         Item.ItemsBean dailyNews = newsList.get(position);
         Intent intent = new Intent(mContext, WrapperActivity.class);
-        intent.putExtra("URL", HttpUtils.baseUrl+dailyNews.getId());
+        intent.putExtra("URL", HttpUtils.baseUrl + dailyNews.getId());
         intent.putExtra("TITLE", dailyNews.getTitle());
         ITITApplication.displayedItem = dailyNews;
         context.startActivity(intent);
@@ -113,8 +124,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
     public static class CardViewHolder extends RecyclerView.ViewHolder implements View
             .OnClickListener {
         public ImageView newsImage;
-        public TextView questionTitle;
-        public TextView dailyTitle;
+        public TextView title;
+        public TextView time;
+        public TextView content;
         public ImageView overflow;
         public TextView authorText;
         public TextView readNumText;
@@ -127,19 +139,20 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             this.mClickResponseListener = clickResponseListener;
 
             newsImage = (ImageView) v.findViewById(R.id.thumbnail_image);
-            questionTitle = (TextView) v.findViewById(R.id.question_title);
-            dailyTitle = (TextView) v.findViewById(R.id.daily_title);
+            title = (TextView) v.findViewById(R.id.title);
+            content = (TextView) v.findViewById(R.id.content);
             overflow = (ImageView) v.findViewById(R.id.card_share_overflow);
             authorText = (TextView) v.findViewById(R.id.author);
             readNumText = (TextView) v.findViewById(R.id.read_num);
+            time = (TextView) v.findViewById(R.id.time);
 
             v.setOnClickListener(this);
-            overflow.setOnClickListener(this);
+            authorText.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            if (v == overflow) {
+            if (v == authorText) {
                 mClickResponseListener.onOverflowClick(v, getAdapterPosition());
             } else {
                 mClickResponseListener.onWholeClick(getAdapterPosition());
