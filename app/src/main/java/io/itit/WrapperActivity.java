@@ -14,6 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import com.orhanobut.logger.Logger;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
@@ -28,13 +29,20 @@ import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
+import io.itit.http.HttpUtils;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static io.itit.http.HttpUtils.iconUrl;
 
 public class WrapperActivity extends SwipeBackActivity {
     String url = "";
     String title = "";
+    int id;
+    boolean isLiked = false;
+    MenuItem favMenu;
+
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.webView)
@@ -51,17 +59,49 @@ public class WrapperActivity extends SwipeBackActivity {
         if (getIntent() != null) {
             url = getIntent().getStringExtra("URL");
             title = getIntent().getStringExtra("TITLE");
+            id = getIntent().getIntExtra("ID", 0);
         }
         initWebview();
         initPullToRefresh();
         webView.loadUrl(url);
         toolbar.setTitle(title);
+
+        HttpUtils.appApis.isFav(ITITApplication.uuid, id).subscribeOn(Schedulers.io()).observeOn
+                (AndroidSchedulers.mainThread()).subscribe(info -> {
+            isLiked = info.isIsLike();
+            if (isLiked) {
+                favMenu.setIcon(R.drawable.ic_like);
+            } else {
+                favMenu.setIcon(R.drawable.ic_unlike);
+            }
+        }, error -> {
+            Logger.e(error.getLocalizedMessage());
+        });
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_fav:
+                if (isLiked) {
+                    HttpUtils.appApis.unFav(ITITApplication.uuid, id).subscribeOn(Schedulers.io()
+                    ).observeOn(AndroidSchedulers.mainThread()).subscribe(info -> {
+                        favMenu.setIcon(R.drawable.ic_unlike);
+                        isLiked = !isLiked;
+                    }, error -> {
+                        Logger.e(error.toString());
+                    });
+
+                } else {
+                    HttpUtils.appApis.fav(ITITApplication.uuid, id).subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread()).subscribe(info -> {
+                        favMenu.setIcon(R.drawable.ic_like);
+                        isLiked = !isLiked;
+                    }, error -> {
+                        Logger.e(error.toString());
+                    });
+                }
                 return true;
             case R.id.action_share:
                 share(title, ITITApplication.displayedItem.getDesc(), url, iconUrl +
@@ -193,6 +233,7 @@ public class WrapperActivity extends SwipeBackActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.content_menu, menu);
+        favMenu = menu.getItem(0);
         return true;
     }
 

@@ -18,6 +18,8 @@ import io.itit.db.DBHelper;
 import io.itit.db.Data;
 import io.itit.http.HttpUtils;
 
+import static io.itit.ITITApplication.uuid;
+
 public class WelcomeActivity extends AppCompatActivity {
 
     @Bind(R.id.welcome)
@@ -44,7 +46,6 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onAnimationStart(Animation animation) {
                 Data user = DBHelper.getDataByKey("USER");
-                String uuid ;
                 if (user == null) {
                     uuid = UUID.randomUUID().toString();
                     DBHelper.insertValue("USER", uuid);

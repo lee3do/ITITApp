@@ -32,7 +32,7 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
     @Bind(R.id.rl_modulename_refresh)
     BGARefreshLayout mRefreshLayout;
     private List<Item.ItemsBean> newsList = new ArrayList<>();
-    int index = 1;
+    int index = 0;
     int pos = 1;
 
     private NewsAdapter mAdapter;
@@ -56,10 +56,10 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
             HttpUtils.appApis.getRecommends(index).subscribeOn(Schedulers.io()).observeOn
                     (AndroidSchedulers.mainThread()).subscribe(info -> {
                 if (info.getItems().size() == 0) {
-                    ToastUtils.show(getActivity(), "文章列表为空!");
+                    ToastUtils.show(getActivity(), "没有更多文章啦!");
                 } else {
-                    mAdapter.updateNewsList(info.getItems(), index == 1);
-                    index++;
+                    mAdapter.updateNewsList(info.getItems(), index == 0);
+                    index+= info.getItems().size();
                 }
                 mRefreshLayout.endRefreshing();
             }, error -> {
@@ -71,10 +71,10 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
             HttpUtils.appApis.getNews(index).subscribeOn(Schedulers.io()).observeOn
                     (AndroidSchedulers.mainThread()).subscribe(info -> {
                 if (info.getItems().size() == 0) {
-                    ToastUtils.show(getActivity(), "文章列表为空!");
+                    ToastUtils.show(getActivity(), "没有更多文章啦!");
                 } else {
-                    mAdapter.updateNewsList(info.getItems(), index == 1);
-                    index++;
+                    mAdapter.updateNewsList(info.getItems(), index == 0);
+                    index+= info.getItems().size();
                 }
                 mRefreshLayout.endRefreshing();
             }, error -> {
@@ -83,13 +83,13 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
                 mRefreshLayout.endRefreshing();
             });
         } else if (pos == 3) {
-            HttpUtils.appApis.getLikes(index).subscribeOn(Schedulers.io()).observeOn
+            HttpUtils.appApis.getLikes(ITITApplication.uuid,index).subscribeOn(Schedulers.io()).observeOn
                     (AndroidSchedulers.mainThread()).subscribe(info -> {
                 if (info.getItems().size() == 0) {
-                    ToastUtils.show(getActivity(), "文章列表为空!");
+                    ToastUtils.show(getActivity(), "没有更多文章啦!");
                 } else {
-                    mAdapter.updateNewsList(info.getItems(), index == 1);
-                    index++;
+                    mAdapter.updateNewsList(info.getItems(), index == 0);
+                    index+= info.getItems().size();
                 }
                 mRefreshLayout.endRefreshing();
             }, error -> {
@@ -110,7 +110,7 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
         ButterKnife.bind(this, view);
         initListView();
         initPullToRefresh();
-        loadList(1);
+        loadList(0);
         return view;
     }
 
@@ -160,7 +160,7 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
 
     @Override
     public void onBGARefreshLayoutBeginRefreshing(BGARefreshLayout refreshLayout) {
-        loadList(1);
+        loadList(0);
     }
 
     @Override

@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), WrapperActivity.class);
                     intent.putExtra("URL", HttpUtils.baseUrl + info.getItems().get(0).getId());
                     intent.putExtra("TITLE", info.getItems().get(0).getTitle());
+                    intent.putExtra("ID",info.getItems().get(0).getId());
                     ITITApplication.displayedItem = info.getItems().get(0);
                     startActivity(intent);
                 }

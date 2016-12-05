@@ -21,6 +21,7 @@ import io.itit.domain.Item;
 public class ITITApplication extends Application {
     public static IWXAPI msgApi;
     public static Context CONTEXT;
+    public static String uuid= "" ;
     public static Item.ItemsBean displayedItem;
     public static final String APP_ID = "wxd2452b98bd35e114";
     public static final String WECHAT_KEY = "778f0c68964b4869618fb0833afe30c4";

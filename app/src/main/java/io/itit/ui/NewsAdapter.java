@@ -113,11 +113,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
     }
 
     private void browse(Context context, int position) {
-        Item.ItemsBean dailyNews = newsList.get(position);
+        Item.ItemsBean item = newsList.get(position);
         Intent intent = new Intent(mContext, WrapperActivity.class);
-        intent.putExtra("URL", HttpUtils.baseUrl + dailyNews.getId());
-        intent.putExtra("TITLE", dailyNews.getTitle());
-        ITITApplication.displayedItem = dailyNews;
+        intent.putExtra("URL", HttpUtils.baseUrl + item.getId());
+        intent.putExtra("TITLE", item.getTitle());
+        intent.putExtra("ID",item.getId());
+        ITITApplication.displayedItem = item;
         context.startActivity(intent);
     }
 
