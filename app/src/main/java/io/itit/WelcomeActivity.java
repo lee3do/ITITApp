@@ -8,8 +8,15 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
+import com.orhanobut.logger.Logger;
+
+import java.util.UUID;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.itit.db.DBHelper;
+import io.itit.db.Data;
+import io.itit.http.HttpUtils;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -36,6 +43,16 @@ public class WelcomeActivity extends AppCompatActivity {
         start_anima.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
+                Data user = DBHelper.getDataByKey("USER");
+                String uuid ;
+                if (user == null) {
+                    uuid = UUID.randomUUID().toString();
+                    DBHelper.insertValue("USER", uuid);
+                } else {
+                    uuid = user.getValue();
+                }
+                Logger.d("reg user :"+uuid);
+                HttpUtils.appApis.register(uuid);
             }
 
             @Override
@@ -44,11 +61,11 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                    getWindow().setFlags(~WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                getWindow().setFlags(~WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager
+                        .LayoutParams.FLAG_FULLSCREEN);
 
-                    startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
-                    finish();
+                startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+                finish();
             }
         });
         welcome.startAnimation(start_anima);

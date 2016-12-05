@@ -12,6 +12,7 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.umeng.socialize.PlatformConfig;
 
+import io.itit.db.DBHelper;
 import io.itit.domain.Item;
 
 /**
@@ -41,6 +42,7 @@ public class ITITApplication extends Application {
         Logger.init("ITIT");
         initImageLoader(getApplicationContext());
         initWechat();
+        DBHelper.init(getApplicationContext());
         CONTEXT = this;
     }
 
