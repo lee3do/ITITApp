@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -29,9 +31,12 @@ import com.orhanobut.logger.Logger;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.trinea.android.common.util.ToastUtils;
+import io.itit.db.DBHelper;
 import io.itit.http.HttpUtils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static io.itit.ITITApplication.uuid;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -44,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     MainActivityFragment recommendFragment;
     MainActivityFragment newsFragment;
     MainActivityFragment favFragment;
+    AccountHeader header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), WrapperActivity.class);
                     intent.putExtra("URL", HttpUtils.baseUrl + info.getItems().get(0).getId());
                     intent.putExtra("TITLE", info.getItems().get(0).getTitle());
-                    intent.putExtra("ID",info.getItems().get(0).getId());
+                    intent.putExtra("ID", info.getItems().get(0).getId());
                     ITITApplication.displayedItem = info.getItems().get(0);
                     startActivity(intent);
                 }
@@ -100,7 +106,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_go_to_search).getActionView();
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_go_to_search)
+                .getActionView();
         SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
         searchView.setSearchableInfo(info);
 
@@ -124,15 +131,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void initDrawer(Bundle savedInstanceState) {
 
-        final IProfile profile = new ProfileDrawerItem().withEmail("ITIT").withName("Lee_3do")
+        final IProfile profile = new ProfileDrawerItem().withEmail("ITIT").withName(uuid)
                 .withIcon(R.drawable.ic_launcher);
-        AccountHeader header = new AccountHeaderBuilder()
+        header = new AccountHeaderBuilder()
                 .withSelectionListEnabledForSingleProfile(false).withActivity(this).addProfiles
                         (profile).withProfileImagesClickable(true).withProfileImagesVisible(true)
                 .withSavedInstance(savedInstanceState).withOnAccountHeaderProfileImageListener
                         (new AccountHeader.OnAccountHeaderProfileImageListener() {
             @Override
             public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
+                new MaterialDialog.Builder(MainActivity.this).theme(Theme
+                        .LIGHT).input("输入用户名", uuid, false, (dialog, input) -> {
+                    uuid = input.toString();
+                    DBHelper.insertValue("USER", uuid);
+                    profile.withName(uuid);
+                    header.updateProfile(profile);
+                }).title("设置用户名").show();
                 return true;
             }
 
