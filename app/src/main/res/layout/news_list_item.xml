@@ -11,6 +11,8 @@
 
     <LinearLayout
         style="@style/cardRelativeLayoutStyle"
+        android:background="@drawable/touch_bg"
+        android:drawSelectorOnTop="true"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -54,9 +56,10 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="110dp"
+            android:layout_height="140dp"
             card_view:srcCompat="@drawable/header"
             android:scaleType="centerCrop"
+            android:visibility="gone"
             android:id="@+id/head_image"/>
 
         <RelativeLayout
