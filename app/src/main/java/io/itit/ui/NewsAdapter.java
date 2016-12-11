@@ -120,7 +120,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
 
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
+                    if (loadedImage.getWidth()<300||loadedImage.getHeight()<100) {
+                        holder.headImage.setVisibility(View.GONE);
+                    }
                 }
 
                 @Override

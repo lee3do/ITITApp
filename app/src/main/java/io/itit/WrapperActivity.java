@@ -38,10 +38,13 @@ import static io.itit.http.HttpUtils.iconUrl;
 
 public class WrapperActivity extends SwipeBackActivity {
     String url = "";
+    String urlFirst = "";
     String title = "";
     int id;
     boolean isLiked = false;
+    boolean isReadOri = false;
     MenuItem favMenu;
+    MenuItem readOriMenu;
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -58,6 +61,7 @@ public class WrapperActivity extends SwipeBackActivity {
         setSupportActionBar(toolbar);
         if (getIntent() != null) {
             url = getIntent().getStringExtra("URL");
+            urlFirst = url;
             title = getIntent().getStringExtra("TITLE");
             id = getIntent().getIntExtra("ID", 0);
         }
@@ -69,11 +73,14 @@ public class WrapperActivity extends SwipeBackActivity {
         HttpUtils.appApis.isFav(ITITApplication.uuid, id).subscribeOn(Schedulers.io()).observeOn
                 (AndroidSchedulers.mainThread()).subscribe(info -> {
             isLiked = info.isIsLike();
-            if (isLiked) {
-                favMenu.setIcon(R.drawable.ic_like);
-            } else {
-                favMenu.setIcon(R.drawable.ic_unlike);
-            }
+            runOnUiThread(()->{
+                Logger.d("this page is liked?"+isLiked);
+                if (isLiked) {
+                    favMenu.setIcon(R.drawable.ic_like);
+                } else {
+                    favMenu.setIcon(R.drawable.ic_unlike);
+                }
+            });
         }, error -> {
             Logger.e(error.getLocalizedMessage());
         });
@@ -106,6 +113,16 @@ public class WrapperActivity extends SwipeBackActivity {
             case R.id.action_share:
                 share(title, ITITApplication.displayedItem.getDesc(), url, iconUrl +
                         ITITApplication.displayedItem.getProviderId());
+                return true;
+            case R.id.read_orign:
+                isReadOri = !isReadOri;
+                if (isReadOri) {
+                    webView.loadUrl(ITITApplication.displayedItem.getUrl());
+                    readOriMenu.setIcon(R.drawable.read_empty);
+                } else {
+                    webView.loadUrl(urlFirst);
+                    readOriMenu.setIcon(R.drawable.read_full);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -212,6 +229,7 @@ public class WrapperActivity extends SwipeBackActivity {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
+            WrapperActivity.this.url = url;
             if (rotateHeaderWebViewFrame != null) {
                 rotateHeaderWebViewFrame.refreshComplete();
             }
@@ -234,16 +252,13 @@ public class WrapperActivity extends SwipeBackActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.content_menu, menu);
         favMenu = menu.getItem(0);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack();
+        readOriMenu = menu.getItem(1);
+        if (isLiked) {
+            favMenu.setIcon(R.drawable.ic_like);
         } else {
-            super.onBackPressed();
+            favMenu.setIcon(R.drawable.ic_unlike);
         }
+        return true;
     }
 
 

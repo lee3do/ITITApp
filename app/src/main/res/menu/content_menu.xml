@@ -2,11 +2,18 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_fav"
-        android:orderInCategory="100"
         android:icon="@drawable/ic_unlike"
+        android:orderInCategory="100"
         android:title="收藏"
         app:showAsAction="always"/>
 
+
+    <item
+        android:id="@+id/read_orign"
+        android:icon="@drawable/read_full"
+        android:orderInCategory="100"
+        android:title="阅读原文"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/action_share"
         android:icon="@drawable/ic_share"
