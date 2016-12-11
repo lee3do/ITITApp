@@ -56,6 +56,16 @@ public class Item {
         private String title;
         private int type;
         private String url;
+
+        public String getImgUrl() {
+            return imgUrl;
+        }
+
+        public void setImgUrl(String imgUrl) {
+            this.imgUrl = imgUrl;
+        }
+
+        private String imgUrl;
         private int viewCount;
 
         public String getAuthor() {

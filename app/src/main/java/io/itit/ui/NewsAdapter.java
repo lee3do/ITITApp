@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
@@ -94,12 +95,47 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
         holder.time.setText(df.format(new Date(item.getFetchDate())));
         holder.authorText.setText(item.getAuthor());
         holder.readNumText.setText(item.getViewCount() + "");
+
         if (StringUtils.isEmpty(item.getDesc())) {
             holder.content.setVisibility(View.GONE);
         } else {
             holder.content.setVisibility(View.VISIBLE);
             holder.content.setText(item.getDesc());
         }
+
+        if (StringUtils.isEmpty(item.getImgUrl())||!isImage(item.getImgUrl())) {
+            holder.headImage.setVisibility(View.GONE);
+        } else {
+            holder.headImage.setVisibility(View.VISIBLE);
+            imageLoader.displayImage(item.getImgUrl(), holder.headImage, options, new ImageLoadingListener() {
+                @Override
+                public void onLoadingStarted(String imageUri, View view) {
+
+                }
+
+                @Override
+                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                    holder.headImage.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+                }
+
+                @Override
+                public void onLoadingCancelled(String imageUri, View view) {
+                    holder.headImage.setVisibility(View.GONE);
+                }
+            });
+        }
+    }
+
+    private boolean isImage(String imgUrl) {
+        if (imgUrl.contains("png")||imgUrl.contains("jpg")||imgUrl.contains("JPG")||imgUrl.contains("PNG")) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -129,6 +165,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
         public TextView time;
         public TextView content;
         public ImageView overflow;
+        public ImageView headImage;
         public TextView authorText;
         public TextView readNumText;
 
@@ -146,6 +183,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             authorText = (TextView) v.findViewById(R.id.author);
             readNumText = (TextView) v.findViewById(R.id.read_num);
             time = (TextView) v.findViewById(R.id.time);
+            headImage = (ImageView) v.findViewById(R.id.head_image);
 
             v.setOnClickListener(this);
             authorText.setOnClickListener(this);
