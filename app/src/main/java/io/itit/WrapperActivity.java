@@ -173,7 +173,7 @@ public class WrapperActivity extends SwipeBackActivity {
                 } else {
                     if (showHeadFirst) {
                         appBar.setExpanded(true, true);
-                        scrollView.setNestedScrollingEnabled(false);
+                        scrollView.setNestedScrollingEnabled(true);
                     }
 
                     webView.loadUrl(urlFirst);
