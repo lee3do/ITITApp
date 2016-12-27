@@ -175,7 +175,6 @@ public class WrapperActivity extends SwipeBackActivity {
                         appBar.setExpanded(true, true);
                         scrollView.setNestedScrollingEnabled(true);
                     }
-
                     webView.loadUrl(urlFirst);
                     readOriMenu.setIcon(R.drawable.read_full);
                 }

@@ -96,6 +96,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                             .getErrcode())).flatMap(info -> HttpUtils.appApis.getWxUserinfo
                             (generateWXUserUrl(info.getAccess_token(), info.getOpenid()))).filter
                             (info -> StringUtils.isEmpty(info.getErrcode())).subscribe(info -> {
+                        ITITApplication.uuid = info.getUnionid();
                         DBHelper.insertValue("USER", info.getUnionid());
                         DBHelper.insertValue("NAME", info.getNickname());
                         DBHelper.insertValue("HEAD", info.getHeadimgurl());

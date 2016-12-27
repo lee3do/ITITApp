@@ -39,10 +39,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
     Context mContext;
 
     private ImageLoader imageLoader = ImageLoader.getInstance();
-    private DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R
-            .drawable.noimage).showImageOnFail(R.drawable.noimage).showImageForEmptyUri(R
-            .drawable.lks_for_blank_url).cacheInMemory(true).cacheOnDisk(true).considerExifParams
-            (true).build();
+    private DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnFail(R
+            .drawable.noimage).showImageForEmptyUri(R.drawable.noimage).cacheInMemory(true)
+            .cacheOnDisk(true).considerExifParams(true).build();
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
     public NewsAdapter(List<Item.ItemsBean> newsList, Context context) {
@@ -103,11 +102,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             holder.content.setText(item.getDesc());
         }
 
-        if (StringUtils.isEmpty(item.getImgUrl())||!isImage(item.getImgUrl())) {
+        if (StringUtils.isEmpty(item.getImgUrl()) || !isImage(item.getImgUrl())) {
             holder.headImage.setVisibility(View.GONE);
+            item.setImgUrl("");
         } else {
             holder.headImage.setVisibility(View.VISIBLE);
-            imageLoader.displayImage(item.getImgUrl(), holder.headImage, options, new ImageLoadingListener() {
+            imageLoader.displayImage(item.getImgUrl(), holder.headImage, options, new
+                    ImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
 
@@ -115,26 +116,29 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
 
                 @Override
                 public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                    holder.headImage.setVisibility(View.GONE);
+                    // holder.headImage.setVisibility(View.GONE);
+                    item.setImgUrl("");
                 }
 
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                    if (loadedImage.getWidth()<300||loadedImage.getHeight()<100) {
-                        holder.headImage.setVisibility(View.GONE);
-                    }
+//                    if (loadedImage.getWidth()<300||loadedImage.getHeight()<100) {
+//                        holder.headImage.setVisibility(View.GONE);
+//                    }
                 }
 
                 @Override
                 public void onLoadingCancelled(String imageUri, View view) {
-                    holder.headImage.setVisibility(View.GONE);
+                    //   holder.headImage.setVisibility(View.GONE);
+                    item.setImgUrl("");
                 }
             });
         }
     }
 
     private boolean isImage(String imgUrl) {
-        if (imgUrl.contains("png")||imgUrl.contains("jpg")||imgUrl.contains("JPG")||imgUrl.contains("PNG")) {
+        if (imgUrl.contains("png") || imgUrl.contains("jpg") || imgUrl.contains("JPG") || imgUrl
+                .contains("PNG")) {
             return true;
         }
         return false;
@@ -155,7 +159,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
         Intent intent = new Intent(mContext, WrapperActivity.class);
         intent.putExtra("URL", HttpUtils.baseUrl + item.getId());
         intent.putExtra("TITLE", item.getTitle());
-        intent.putExtra("ID",item.getId());
+        intent.putExtra("ID", item.getId());
         ITITApplication.displayedItem = item;
         context.startActivity(intent);
     }

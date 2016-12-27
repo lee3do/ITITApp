@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     IWXAPI api = ITITApplication.msgApi;
                     api.sendReq(req);
                 } else {
-                    new MaterialDialog.Builder(getApplicationContext()).theme(Theme.LIGHT).title
+                    new MaterialDialog.Builder(MainActivity.this).theme(Theme.LIGHT).title
                             ("确定登出吗?").positiveText("确定").negativeText("取消").onPositive((dialog,
                                                                                          which) -> {
                         DBHelper.deleteKey("USER");
@@ -186,7 +186,8 @@ public class MainActivity extends AppCompatActivity {
                         ((ProfileDrawerItem) profile).withName(uuid).withIcon(R.drawable
                                 .ic_launcher);
                         runOnUiThread(() -> header.updateProfile(profile));
-
+                        hasLogin = false;
+                        dialog.dismiss();
                     }).onNegative((dialog, which) -> dialog.dismiss()).show();
                 }
 

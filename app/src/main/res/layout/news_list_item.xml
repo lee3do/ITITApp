@@ -5,9 +5,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/news_list_card_view"
-    style="@style/cardStyle"
-    card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="4dp">
+    style="@style/cardStyle">
 
     <LinearLayout
         style="@style/cardRelativeLayoutStyle"

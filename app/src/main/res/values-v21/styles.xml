@@ -3,6 +3,6 @@
     <style name="cardStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">7dp</item>
+        <item name="android:layout_marginTop">7dp</item>
     </style>
 </resources>
