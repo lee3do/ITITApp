@@ -122,7 +122,6 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
         // 设置下拉刷新和上拉加载更多的风格
         mRefreshLayout.setRefreshViewHolder(refreshViewHolder);
 
-
         // 为了增加下拉刷新头部和加载更多的通用性，提供了以下可选配置选项  -------------START
         // 设置正在加载更多时不显示加载更多控件
         // mRefreshLayout.setIsShowLoadingMoreView(false);
