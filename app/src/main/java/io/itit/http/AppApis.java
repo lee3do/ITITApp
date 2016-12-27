@@ -3,6 +3,8 @@ package io.itit.http;
 import io.itit.domain.Empty;
 import io.itit.domain.Fav;
 import io.itit.domain.Item;
+import io.itit.domain.WxAuth;
+import io.itit.domain.WxUserInfo;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -46,6 +48,12 @@ public interface AppApis {
 
     @GET("srv/feed/islikeit/{uuid}/{id}")
     Observable<Fav> isFav(@Path("uuid") String uuid, @Path("id") int id);
+
+    @GET()
+    Observable<WxAuth> wxAuth(@Url String url);
+
+    @GET()
+    Observable<WxUserInfo> getWxUserinfo(@Url String url);
 
     //	public static final String SEARCH_URL = "http://itit.io:7001/srv/feed/search/user/0?q=";
 

@@ -48,7 +48,6 @@ public class WelcomeActivity extends AppCompatActivity {
                 Data user = DBHelper.getDataByKey("USER");
                 if (user == null) {
                     uuid = UUID.randomUUID().toString();
-                    DBHelper.insertValue("USER", uuid);
                 } else {
                     uuid = user.getValue();
                 }

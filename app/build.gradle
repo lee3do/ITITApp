@@ -2,6 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
+    signingConfigs {
+        itit {
+            keyAlias 'itit'
+            keyPassword '0321670'
+            storeFile file('/Users/Lee_3do/Dropbox/ITIT/ITIT.jks')
+            storePassword '0321670'
+        }
+    }
+
     compileSdkVersion 23
     buildToolsVersion "24.0.0"
     defaultConfig {
@@ -11,11 +20,16 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.itit
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.itit
+        }
+        debug {
+            signingConfig signingConfigs.itit
         }
     }
     compileOptions {
@@ -58,6 +72,7 @@ dependencies {
     compile 'com.afollestad.material-dialogs:core:0.8.6.1'
     compile 'com.afollestad.material-dialogs:commons:0.8.6.1'
     compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'org.greenrobot:eventbus:3.0.0'
     compile 'io.reactivex:rxjava:1.1.6'
     compile files('libs/alipaySdk-20160825.jar')
     compile files('libs/jg_filter_sdk_1.1.jar')
@@ -73,7 +88,6 @@ dependencies {
     compile files('libs/zxing.jar')
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
-
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'cn.bingoogolapple:bga-refreshlayout:1.1.6@aar'
     compile(name: 'SwipeBackLayout-V1.1.0', ext: 'aar')

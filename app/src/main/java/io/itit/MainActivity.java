@@ -2,6 +2,7 @@ package io.itit;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -24,12 +25,23 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.orhanobut.logger.Logger;
+import com.tencent.mm.sdk.modelmsg.SendAuth;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.trinea.android.common.util.StringUtils;
 import cn.trinea.android.common.util.ToastUtils;
 import io.itit.db.DBHelper;
+import io.itit.db.Data;
+import io.itit.event.WxLoginEvent;
 import io.itit.http.HttpUtils;
+import io.itit.ui.Utils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -47,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
     MainActivityFragment newsFragment;
     MainActivityFragment favFragment;
     AccountHeader header;
+    MaterialDialog weixinLoginDialog;
+    IProfile profile;
+    boolean hasLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,28 +72,26 @@ public class MainActivity extends AppCompatActivity {
         //透明导航栏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         setSupportActionBar(toolbar);
-        fab.setOnClickListener(view -> {
-            HttpUtils.appApis.getRandom().subscribeOn(Schedulers.io()).observeOn
-                    (AndroidSchedulers.mainThread()).subscribe(info -> {
-                if (info.getItems().size() == 0) {
-                    ToastUtils.show(getApplicationContext(), "获取文章失败!");
-                } else {
-                    Intent intent = new Intent(getApplicationContext(), WrapperActivity.class);
-                    intent.putExtra("URL", HttpUtils.baseUrl + info.getItems().get(0).getId());
-                    intent.putExtra("TITLE", info.getItems().get(0).getTitle());
-                    intent.putExtra("ID", info.getItems().get(0).getId());
-                    ITITApplication.displayedItem = info.getItems().get(0);
-                    startActivity(intent);
-                }
-            }, error -> {
-                Logger.e(error.getLocalizedMessage());
+        fab.setOnClickListener(view -> HttpUtils.appApis.getRandom().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(info -> {
+            if (info.getItems().size() == 0) {
                 ToastUtils.show(getApplicationContext(), "获取文章失败!");
-            });
-        });
+            } else {
+                Intent intent = new Intent(getApplicationContext(), WrapperActivity.class);
+                intent.putExtra("URL", HttpUtils.baseUrl + info.getItems().get(0).getId());
+                intent.putExtra("TITLE", info.getItems().get(0).getTitle());
+                intent.putExtra("ID", info.getItems().get(0).getId());
+                ITITApplication.displayedItem = info.getItems().get(0);
+                startActivity(intent);
+            }
+        }, error -> {
+            Logger.e(error.getLocalizedMessage());
+            ToastUtils.show(getApplicationContext(), "获取文章失败!");
+        }));
 
         initDrawer(savedInstanceState);
         initFragments();
-
+        EventBus.getDefault().register(this);
     }
 
     private void initFragments() {
@@ -130,23 +143,53 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDrawer(Bundle savedInstanceState) {
+        profile = new ProfileDrawerItem().withEmail("ITIT");
+        Data user = DBHelper.getDataByKey("NAME");
 
-        final IProfile profile = new ProfileDrawerItem().withEmail("ITIT").withName(uuid)
-                .withIcon(R.drawable.ic_launcher);
-        header = new AccountHeaderBuilder()
-                .withSelectionListEnabledForSingleProfile(false).withActivity(this).addProfiles
-                        (profile).withProfileImagesClickable(true).withProfileImagesVisible(true)
-                .withSavedInstance(savedInstanceState).withOnAccountHeaderProfileImageListener
-                        (new AccountHeader.OnAccountHeaderProfileImageListener() {
+        if (user != null) {
+            profile.withName(user.getValue());
+            Data headUrl = DBHelper.getDataByKey("HEAD");
+            if (headUrl != null && !StringUtils.isEmpty(headUrl.getValue())) {
+                profile.withIcon(Uri.parse(headUrl.getValue()));
+            } else {
+                profile.withIcon(R.drawable.ic_launcher);
+            }
+            hasLogin = true;
+        } else {
+            ((ProfileDrawerItem) profile).withName(uuid).withIcon(R.drawable.ic_launcher);
+        }
+
+        header = new AccountHeaderBuilder().withSelectionListEnabledForSingleProfile(false)
+                .withActivity(this).addProfiles(profile).withProfileImagesClickable(true)
+                .withProfileImagesVisible(true).withSavedInstance(savedInstanceState)
+                .withOnAccountHeaderProfileImageListener(new AccountHeader
+                        .OnAccountHeaderProfileImageListener() {
             @Override
             public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
-                new MaterialDialog.Builder(MainActivity.this).theme(Theme
-                        .LIGHT).input("输入用户名", uuid, false, (dialog, input) -> {
-                    uuid = input.toString();
-                    DBHelper.insertValue("USER", uuid);
-                    profile.withName(uuid);
-                    header.updateProfile(profile);
-                }).title("设置用户名").show();
+                if (!hasLogin) {
+                    weixinLoginDialog = Utils.generateWaitingDialog("微信登录中,请稍候", MainActivity.this);
+                    weixinLoginDialog.setCanceledOnTouchOutside(true);
+                    weixinLoginDialog.setCancelable(true);
+                    SendAuth.Req req = new SendAuth.Req();
+                    req.scope = "snsapi_userinfo";
+                    req.state = "ITIT";
+                    IWXAPI api = ITITApplication.msgApi;
+                    api.sendReq(req);
+                } else {
+                    new MaterialDialog.Builder(getApplicationContext()).theme(Theme.LIGHT).title
+                            ("确定登出吗?").positiveText("确定").negativeText("取消").onPositive((dialog,
+                                                                                         which) -> {
+                        DBHelper.deleteKey("USER");
+                        DBHelper.deleteKey("NAME");
+                        DBHelper.deleteKey("HEAD");
+                        uuid = UUID.randomUUID().toString();
+                        ((ProfileDrawerItem) profile).withName(uuid).withIcon(R.drawable
+                                .ic_launcher);
+                        runOnUiThread(() -> header.updateProfile(profile));
+
+                    }).onNegative((dialog, which) -> dialog.dismiss()).show();
+                }
+
                 return true;
             }
 
@@ -170,8 +213,8 @@ public class MainActivity extends AppCompatActivity {
 
         Drawer drawer = new DrawerBuilder().withActivity(this).withToolbar(toolbar)
                 .withAccountHeader(header).addDrawerItems(new SecondaryDrawerItem().withName
-                        ("资讯"), item1, item2, new DividerDrawerItem(), new
-                        SecondaryDrawerItem().withName("个人"), item3).build();
+                        ("资讯"), item1, item2, new DividerDrawerItem(), new SecondaryDrawerItem()
+                        .withName("个人"), item3).build();
         drawer.setSelection(0);
         drawer.setOnDrawerItemClickListener((view, position, drawerItem) -> {
             drawer.closeDrawer();
@@ -197,4 +240,41 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Subscribe
+    public void onEvent(WxLoginEvent event) {
+        if (weixinLoginDialog != null) {
+            weixinLoginDialog.dismiss();
+        }
+        if (event.isSuccess) {
+            Data user = DBHelper.getDataByKey("NAME");
+            if (user == null) {
+            } else {
+                profile.withName(user.getValue());
+                Data headUrl = DBHelper.getDataByKey("HEAD");
+                if (headUrl != null && !StringUtils.isEmpty(headUrl.getValue())) {
+                    profile.withIcon(Uri.parse(headUrl.getValue()));
+                }
+            }
+            runOnUiThread(() -> header.updateProfile(profile));
+            hasLogin = true;
+        } else {
+            Logger.e("Wx login error:" + event.code);
+            ToastUtils.show(getApplicationContext(), "登录失败!");
+            hasLogin = false;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (weixinLoginDialog != null) {
+            weixinLoginDialog.dismiss();
+        }
+    }
 }

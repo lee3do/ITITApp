@@ -88,6 +88,14 @@ public class DBHelper {
             return list.get(0);
         }
     }
+    public static void deleteKey(String key) {
+        QueryBuilder<Data> qb = DBHelper.getInstance().getDataDao().queryBuilder();
+        qb.where(DataDao.Properties.Key.eq(key));
+        Data data = qb.unique();
+        if (data!=null) {
+            DBHelper.getInstance().getDataDao().delete(data);
+        }
+    }
 
     public static String getUserName() {
         //TODO
@@ -106,4 +114,6 @@ public class DBHelper {
     public void setDataDao(DataDao dataDao) {
         this.dataDao = dataDao;
     }
+
+
 }

@@ -2,8 +2,14 @@ package io.itit;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.widget.ImageView;
 
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
@@ -27,7 +33,6 @@ public class ITITApplication extends Application {
     public static final String WECHAT_KEY = "778f0c68964b4869618fb0833afe30c4";
 
     public static void initImageLoader(Context context) {
-
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
                 .threadPriority(Thread.NORM_PRIORITY - 2).
                 memoryCacheSize(2 * 1024 * 1024)//设置内存缓存的大小
@@ -35,6 +40,18 @@ public class ITITApplication extends Application {
                 discCacheFileNameGenerator(new Md5FileNameGenerator()).tasksProcessingOrder
                         (QueueProcessingType.LIFO).writeDebugLogs().build();
         ImageLoader.getInstance().init(config);
+
+        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                DisplayImageOptions options = new DisplayImageOptions.Builder()
+                        .cacheInMemory(true)
+                        .cacheOnDisk(true)
+                        .build();
+                ImageLoader.getInstance().displayImage(uri.toString(), imageView, options);
+            }
+        });
     }
 
     @Override
@@ -46,6 +63,8 @@ public class ITITApplication extends Application {
         DBHelper.init(getApplicationContext());
         CONTEXT = this;
     }
+
+
 
     protected void initWechat() {
         msgApi = WXAPIFactory.createWXAPI(getApplicationContext(), APP_ID, true);
