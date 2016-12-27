@@ -258,7 +258,7 @@ public class WrapperActivity extends SwipeBackActivity {
         ws.setLoadsImagesAutomatically(true);
         ws.setSavePassword(false);
         ws.setSaveFormData(false);
-
+        ws.setLoadWithOverviewMode(true);
         ws.setAllowFileAccess(true);
         // 开启 DOM storage API 功能
         ws.setDomStorageEnabled(true);

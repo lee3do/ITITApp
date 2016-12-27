@@ -12,7 +12,8 @@
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="156dp"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+       >
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_layout"
