@@ -29,8 +29,8 @@ public class ITITApplication extends Application {
     public static Context CONTEXT;
     public static String uuid= "" ;
     public static Item.ItemsBean displayedItem;
-    public static final String APP_ID = "wxd2452b98bd35e114";
-    public static final String WECHAT_KEY = "778f0c68964b4869618fb0833afe30c4";
+    public static final String APP_ID = "wx77fc6f75d7424baa";
+    public static final String WECHAT_KEY = "4cfd7870e8b1da6502796098eb415757";
 
     public static void initImageLoader(Context context) {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
