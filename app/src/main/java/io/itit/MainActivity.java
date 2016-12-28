@@ -252,6 +252,7 @@ public class MainActivity extends AppCompatActivity {
                 ((ProfileDrawerItem) profile).withName(uuid).withIcon(R.drawable.ic_launcher);
                 runOnUiThread(() -> header.updateProfile(profile));
                 hasLogin = false;
+
                 profileImage.setImageResource(R.drawable.boy);
                 dialog.dismiss();
             }).onNegative((dialog, which) -> dialog.dismiss()).show();
@@ -310,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
         set3.play(animatorY).with(animatorX).with(scaleX).with(scaleY);
         set3.setDuration(2000);
         set3.start();
+
         set3.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {

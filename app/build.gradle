@@ -41,6 +41,7 @@ android {
 }
 
 repositories {
+    maven { url "https://jitpack.io" }
     flatDir {
         dirs 'libs'
     }
@@ -92,4 +93,5 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'cn.bingoogolapple:bga-refreshlayout:1.1.6@aar'
     compile(name: 'SwipeBackLayout-V1.1.0', ext: 'aar')
+    compile 'com.github.2359media:EasyAndroidAnimations:0.8'
 }

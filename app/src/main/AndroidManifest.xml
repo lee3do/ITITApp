@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="io.itit">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -23,7 +24,8 @@
     <application
         android:name=".ITITApplication"
         android:allowBackup="true"
-        android:icon="@drawable/itit"
+        android:icon="@drawable/logo"
+        tools:replace="android:theme,android:icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.ITIT.Light.NoActionBar">
