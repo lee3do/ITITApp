@@ -1,5 +1,8 @@
 package io.itit;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -9,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -23,6 +27,7 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -36,6 +41,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.trinea.android.common.util.StringUtils;
 import cn.trinea.android.common.util.ToastUtils;
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.itit.db.DBHelper;
 import io.itit.db.Data;
 import io.itit.event.WxLoginEvent;
@@ -61,6 +67,13 @@ public class MainActivity extends AppCompatActivity {
     MaterialDialog weixinLoginDialog;
     IProfile profile;
     boolean hasLogin = false;
+    @Bind(R.id.search)
+    ImageView search;
+    @Bind(R.id.profile_image)
+    CircleImageView profileImage;
+    Drawer drawer;
+    @Bind(R.id.big_profile_image)
+    CircleImageView bigProfileImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         initDrawer(savedInstanceState);
         initFragments();
         EventBus.getDefault().register(this);
+        profileImage.setOnClickListener(v -> profileClick());
     }
 
     private void initFragments() {
@@ -150,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
             Data headUrl = DBHelper.getDataByKey("HEAD");
             if (headUrl != null && !StringUtils.isEmpty(headUrl.getValue())) {
                 profile.withIcon(Uri.parse(headUrl.getValue()));
+                ImageLoader.getInstance().displayImage(headUrl.getValue(), profileImage);
             } else {
                 profile.withIcon(R.drawable.ic_launcher);
             }
@@ -165,31 +180,7 @@ public class MainActivity extends AppCompatActivity {
                         .OnAccountHeaderProfileImageListener() {
             @Override
             public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
-                if (!hasLogin) {
-                    weixinLoginDialog = Utils.generateWaitingDialog("微信登录中,请稍候", MainActivity.this);
-                    weixinLoginDialog.setCanceledOnTouchOutside(true);
-                    weixinLoginDialog.setCancelable(true);
-                    SendAuth.Req req = new SendAuth.Req();
-                    req.scope = "snsapi_userinfo";
-                    req.state = "ITIT";
-                    IWXAPI api = ITITApplication.msgApi;
-                    api.sendReq(req);
-                } else {
-                    new MaterialDialog.Builder(MainActivity.this).theme(Theme.LIGHT).title
-                            ("确定登出吗?").positiveText("确定").negativeText("取消").onPositive((dialog,
-                                                                                         which) -> {
-                        DBHelper.deleteKey("USER");
-                        DBHelper.deleteKey("NAME");
-                        DBHelper.deleteKey("HEAD");
-                        uuid = UUID.randomUUID().toString();
-                        ((ProfileDrawerItem) profile).withName(uuid).withIcon(R.drawable
-                                .ic_launcher);
-                        runOnUiThread(() -> header.updateProfile(profile));
-                        hasLogin = false;
-                        dialog.dismiss();
-                    }).onNegative((dialog, which) -> dialog.dismiss()).show();
-                }
-
+                profileClick();
                 return true;
             }
 
@@ -211,10 +202,10 @@ public class MainActivity extends AppCompatActivity {
                 .Icon.gmd_wb_sunny).withIdentifier(3);
 
 
-        Drawer drawer = new DrawerBuilder().withActionBarDrawerToggle(false).withActivity(this).withToolbar(toolbar)
-                .withAccountHeader(header).addDrawerItems(new SecondaryDrawerItem().withName
-                        ("资讯"), item1, item2, new DividerDrawerItem(), new SecondaryDrawerItem()
-                        .withName("个人"), item3).build();
+        drawer = new DrawerBuilder().withActionBarDrawerToggle(false).withActivity(this)
+                .withToolbar(toolbar).withAccountHeader(header).addDrawerItems(new
+                        SecondaryDrawerItem().withName("资讯"), item1, item2, new DividerDrawerItem
+                        (), new SecondaryDrawerItem().withName("个人"), item3).build();
         drawer.setSelection(0);
         drawer.setOnDrawerItemClickListener((view, position, drawerItem) -> {
             drawer.closeDrawer();
@@ -240,6 +231,33 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void profileClick() {
+        if (!hasLogin) {
+            drawer.closeDrawer();
+            weixinLoginDialog = Utils.generateWaitingDialog("微信登录中,请稍候", MainActivity.this);
+            weixinLoginDialog.setCanceledOnTouchOutside(true);
+            weixinLoginDialog.setCancelable(true);
+            SendAuth.Req req = new SendAuth.Req();
+            req.scope = "snsapi_userinfo";
+            req.state = "ITIT";
+            IWXAPI api = ITITApplication.msgApi;
+            api.sendReq(req);
+        } else {
+            new MaterialDialog.Builder(MainActivity.this).theme(Theme.LIGHT).title("确定登出吗?")
+                    .positiveText("确定").negativeText("取消").onPositive((dialog, which) -> {
+                DBHelper.deleteKey("USER");
+                DBHelper.deleteKey("NAME");
+                DBHelper.deleteKey("HEAD");
+                uuid = UUID.randomUUID().toString();
+                ((ProfileDrawerItem) profile).withName(uuid).withIcon(R.drawable.ic_launcher);
+                runOnUiThread(() -> header.updateProfile(profile));
+                hasLogin = false;
+                profileImage.setImageResource(R.drawable.boy);
+                dialog.dismiss();
+            }).onNegative((dialog, which) -> dialog.dismiss()).show();
+        }
+    }
+
     @Subscribe
     public void onEvent(WxLoginEvent event) {
         if (weixinLoginDialog != null) {
@@ -253,6 +271,10 @@ public class MainActivity extends AppCompatActivity {
                 Data headUrl = DBHelper.getDataByKey("HEAD");
                 if (headUrl != null && !StringUtils.isEmpty(headUrl.getValue())) {
                     profile.withIcon(Uri.parse(headUrl.getValue()));
+                    runOnUiThread(() -> {
+                        setAnimation(headUrl);
+                    });
+
                 }
             }
             runOnUiThread(() -> header.updateProfile(profile));
@@ -262,6 +284,60 @@ public class MainActivity extends AppCompatActivity {
             ToastUtils.show(getApplicationContext(), "登录失败!");
             hasLogin = false;
         }
+    }
+
+    private void setAnimation(Data headUrl) {
+        bigProfileImage.bringToFront();
+        bigProfileImage.requestLayout();
+        bigProfileImage.setVisibility(View.VISIBLE);
+        ImageLoader.getInstance().displayImage(headUrl.getValue(), bigProfileImage);
+
+        float toX = profileImage.getX();
+        float fromX = bigProfileImage.getX();
+        float toY = profileImage.getY();
+        float fromY = bigProfileImage.getY();
+
+        ObjectAnimator animatorX = ObjectAnimator.ofFloat(bigProfileImage, "translationX",0, toX-fromX-180);
+
+        ObjectAnimator animatorY = ObjectAnimator.ofFloat(bigProfileImage, "translationY",0, toY-fromY-50);
+
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(bigProfileImage, "scaleX", 1f, 0.3f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(bigProfileImage, "scaleY", 1f, 0.3f);
+
+
+
+        AnimatorSet set3 = new AnimatorSet();
+        set3.play(animatorY).with(animatorX).with(scaleX).with(scaleY);
+        set3.setDuration(2000);
+        set3.start();
+        set3.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                bigProfileImage.setVisibility(View.GONE);
+                bigProfileImage.setX(fromX);
+                bigProfileImage.setY(fromY);
+                ImageLoader.getInstance().displayImage(headUrl.getValue(), profileImage);
+                ObjectAnimator animator = ObjectAnimator.ofFloat(profileImage, "translationX",0, -20,0,20,0);
+                animator.setDuration(1000);
+                animator.start();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                bigProfileImage.setVisibility(View.GONE);
+                ImageLoader.getInstance().displayImage(headUrl.getValue(), profileImage);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
     }
 
     @Override

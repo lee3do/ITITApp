@@ -61,11 +61,15 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
                     mAdapter.updateNewsList(info.getItems(), index == 0);
                     index+= info.getItems().size();
                 }
-                mRefreshLayout.endRefreshing();
+                if (mRefreshLayout!=null) {
+                    mRefreshLayout.endRefreshing();
+                }
             }, error -> {
                 Logger.e(error.getLocalizedMessage());
-                ToastUtils.show(getActivity(), "获取文章失败!");
-                mRefreshLayout.endRefreshing();
+             //   ToastUtils.show(getActivity(), "获取文章失败!");
+                if (mRefreshLayout!=null) {
+                    mRefreshLayout.endRefreshing();
+                }
             });
         } else if (pos == 2) {
             HttpUtils.appApis.getNews(index).subscribeOn(Schedulers.io()).observeOn
@@ -76,11 +80,15 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
                     mAdapter.updateNewsList(info.getItems(), index == 0);
                     index+= info.getItems().size();
                 }
-                mRefreshLayout.endRefreshing();
+                if (mRefreshLayout!=null) {
+                    mRefreshLayout.endRefreshing();
+                }
             }, error -> {
                 Logger.e(error.getLocalizedMessage());
-                ToastUtils.show(getActivity(), "获取文章失败!");
-                mRefreshLayout.endRefreshing();
+               // ToastUtils.show(getActivity(), "获取文章失败!");
+                if (mRefreshLayout!=null) {
+                    mRefreshLayout.endRefreshing();
+                }
             });
         } else if (pos == 3) {
             HttpUtils.appApis.getLikes(ITITApplication.uuid,index).subscribeOn(Schedulers.io()).observeOn
@@ -91,11 +99,15 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
                     mAdapter.updateNewsList(info.getItems(), index == 0);
                     index+= info.getItems().size();
                 }
-                mRefreshLayout.endRefreshing();
+                if (mRefreshLayout!=null) {
+                    mRefreshLayout.endRefreshing();
+                }
             }, error -> {
                 Logger.e(error.getLocalizedMessage());
-                ToastUtils.show(getActivity(), "获取文章失败!");
-                mRefreshLayout.endRefreshing();
+              //  ToastUtils.show(getActivity(), "获取文章失败!");
+                if (mRefreshLayout!=null) {
+                    mRefreshLayout.endRefreshing();
+                }
             });
         }
 
