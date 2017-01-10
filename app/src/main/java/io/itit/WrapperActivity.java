@@ -127,7 +127,7 @@ public class WrapperActivity extends SwipeBackActivity {
         toolbar.setTitle("  ");
         if (!StringUtils.isEmpty(ITITApplication.displayedItem.getImgUrl())) {
             showHeadFirst = true;
-            imageLoader.displayImage(ITITApplication.displayedItem.getImgUrl(), headImage, options);
+            imageLoader.displayImage(ITITApplication.displayedItem.getImgUrl().replace("https:","http:"), headImage, options);
 //        mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.actionbarTextStyle);
 //        mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.actionbarTextStyle);
         } else {

@@ -99,7 +99,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             holder.content.setVisibility(View.GONE);
         } else {
             holder.content.setVisibility(View.VISIBLE);
-            holder.content.setText(item.getDesc());
+            holder.content.setText(item.getDesc().replace(" ",""));
         }
 
         if (StringUtils.isEmpty(item.getImgUrl()) || !isImage(item.getImgUrl())) {
@@ -122,9 +122,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
 
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-//                    if (loadedImage.getWidth()<300||loadedImage.getHeight()<100) {
-//                        holder.headImage.setVisibility(View.GONE);
-//                    }
+                    if (loadedImage.getWidth()<300||loadedImage.getHeight()<100) {
+                        holder.headImage.setVisibility(View.GONE);
+                    }
                 }
 
                 @Override

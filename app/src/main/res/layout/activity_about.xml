@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_about"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#ffffff"
+    tools:context="io.itit.AboutActivity">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:src="@drawable/logo"
+        android:layout_alignParentTop="true"
+        android:id="@+id/logo"/>
+
+    <TextView
+        android:text="当前版本 V1.0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/logo"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/versionText"
+        android:alpha="0"
+        android:textSize="17sp"/>
+
+    <TextView
+        android:text="「醉笑陪君三千场,不诉离殇」"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="330dp"
+        android:id="@+id/centerText"
+        android:alpha="0"
+        android:textSize="23sp"/>
+
+    <TextView
+        android:text="\@2017 ITIT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/textView"
+        android:alpha="0"
+        android:textSize="17sp"/>
+
+
+</RelativeLayout>

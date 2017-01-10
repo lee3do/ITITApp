@@ -207,14 +207,15 @@ public class MainActivity extends AppCompatActivity {
         PrimaryDrawerItem item3 = new PrimaryDrawerItem().withName("收藏").withIcon(GoogleMaterial
                 .Icon.gmd_favorite).withIdentifier(2);
 
-        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withName("天气").withIcon(GoogleMaterial
-                .Icon.gmd_wb_sunny).withIdentifier(3);
+        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withName("关于").withIcon(GoogleMaterial
+                .Icon.gmd_settings_applications).withIdentifier(3).withSelectable(false);
 
 
         drawer = new DrawerBuilder().withActionBarDrawerToggle(false).withActivity(this)
                 .withToolbar(toolbar).withAccountHeader(header).addDrawerItems(new
                         SecondaryDrawerItem().withName("资讯"), item1, item2, new DividerDrawerItem
-                        (), new SecondaryDrawerItem().withName("个人"), item3).build();
+                        (), new SecondaryDrawerItem().withName("个人"), item3, new DividerDrawerItem
+                        (),new SecondaryDrawerItem().withName("系统"), item4).build();
         drawer.setSelection(0);
         drawer.setOnDrawerItemClickListener((view, position, drawerItem) -> {
             drawer.closeDrawer();
@@ -232,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
                             favFragment).commit();
                     break;
                 case 3:
+                    startActivity(new Intent(MainActivity.this,AboutActivity.class));
                     break;
                 default:
                     break;

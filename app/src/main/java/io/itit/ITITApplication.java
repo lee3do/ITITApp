@@ -38,7 +38,7 @@ public class ITITApplication extends Application {
                 memoryCacheSize(2 * 1024 * 1024)//设置内存缓存的大小
                 .diskCacheSize(50 * 1024 * 1024). //设置磁盘缓存大小 50M   .
                 discCacheFileNameGenerator(new Md5FileNameGenerator()).tasksProcessingOrder
-                        (QueueProcessingType.LIFO).writeDebugLogs().build();
+                        (QueueProcessingType.LIFO).build();
         ImageLoader.getInstance().init(config);
 
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
