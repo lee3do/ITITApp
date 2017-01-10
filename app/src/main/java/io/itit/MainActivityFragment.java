@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import cn.trinea.android.common.util.ToastUtils;
 import io.itit.domain.Item;
 import io.itit.http.HttpUtils;
 import io.itit.ui.NewsAdapter;
+import io.itit.ui.Utils;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -38,6 +40,7 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
 
     private NewsAdapter mAdapter;
     String query="";
+    MaterialDialog loadingDialog;
 
 
     @Override
@@ -115,10 +118,20 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
             if (StringUtils.isEmpty(query)) {
                 return;
             }
+            if (index==0) {
+                mAdapter.setNewsList(new ArrayList<>(),true);
+            }
             HttpUtils.appApis.searchNews(index,query).subscribeOn(Schedulers.io()).observeOn
                     (AndroidSchedulers.mainThread()).subscribe(info -> {
+                if (loadingDialog!=null) {
+                    loadingDialog.dismiss();
+                }
                 if (info.getItems().size() == 0) {
-                    ToastUtils.show(getActivity(), "搜索结果为空!");
+                    if (index == 0) {
+                        ToastUtils.show(getActivity(), "搜索结果为空!");
+                    } else {
+                        ToastUtils.show(getActivity(), "没有更多文章啦!");
+                    }
                 } else {
                     mAdapter.updateNewsList(info.getItems(), index == 0);
                     index+= info.getItems().size();
@@ -127,6 +140,10 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
                     mRefreshLayout.endRefreshing();
                 }
             }, error -> {
+                if (loadingDialog!=null) {
+                    loadingDialog.dismiss();
+                    ToastUtils.show(getActivity(), "搜索结果为空!");
+                }
                 Logger.e(error.getLocalizedMessage());
                 //  ToastUtils.show(getActivity(), "获取文章失败!");
                 if (mRefreshLayout!=null) {
@@ -205,7 +222,13 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
     }
 
     public void setSearcheArgs(String query) {
+        if (StringUtils.isEmpty(query)) {
+            return;
+        }
         this.query = query;
+        loadingDialog = Utils.generateWaitingDialog("搜索中", getContext());
+        loadingDialog.setCanceledOnTouchOutside(true);
+        loadingDialog.setCancelable(true);
         loadList(0);
     }
 }
