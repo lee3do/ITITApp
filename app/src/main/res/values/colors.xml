@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#1E8AE8</color>
-    <color name="colorPrimaryDark">#176EB9</color>
-    <color name="colorAccent">#ff307ab3</color>
+    <color name="colorPrimaryDark">#1E8AE8</color>
+    <color name="colorAccent">#1E8AE8</color>
     <color name="common_text_color">#FFFFFFFF</color>
     <color name="text_color_white_80">#CCFFFFFF</color>
 
@@ -13,6 +13,8 @@
     <color name="text_color_secondary">#66000000</color>
     <color name="text_color_inverse">@android:color/white</color>
     <color name="searchmenu">#4BA1EE</color>
+
+    <color name="search_view_hint_color">#e3f2fd</color>
 
 
     <color name="view_line">#c1c1c1</color>
