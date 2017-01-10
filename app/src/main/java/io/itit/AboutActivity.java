@@ -27,8 +27,6 @@ public class AboutActivity extends SwipeBackActivity {
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
 
-        float toY = logo.getY();
-
         ObjectAnimator animatorY = ObjectAnimator.ofFloat(logo, "translationY", 1000, 0);
 
         ObjectAnimator alpha1 = ObjectAnimator.ofFloat(versionText, "alpha", 0, 1);

@@ -10,6 +10,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import retrofit2.http.Url;
 import rx.Observable;
 
@@ -26,11 +27,12 @@ public interface AppApis {
     @GET("srv/feed/like/{uuid}/{index}")
     Observable<Item> getLikes(@Path("uuid") String uuid, @Path("index") int index);
 
-    @GET("srv/feed/search/user/0?q={query}/{index}")
-    Observable<Item> search(@Path("query") String query, @Path("index") int index);
 
     @POST("srv/feed/device/{id}")
     Call<ResponseBody> register(@Path("id") String id);
+
+    @GET("srv/feed/search/user/{index}")
+    Observable<Item> searchNews(@Path("index") int index,@Query("q") String query);
 
     /*
     public static final String IS_LIKE_URL = "http://itit.io:7001/srv/feed/islikeit/";

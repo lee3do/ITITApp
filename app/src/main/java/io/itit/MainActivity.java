@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -76,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
     CircleImageView bigProfileImage;
     @Bind(R.id.show_more)
     ImageView showMore;
+    @Bind(R.id.search_bar)
+    RelativeLayout searchBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 drawer.openDrawer();
             }
+        });
+        searchBar.setOnClickListener(v->{
+            startActivity(new Intent(MainActivity.this,SearchActivity.class));
         });
     }
 
@@ -207,15 +213,16 @@ public class MainActivity extends AppCompatActivity {
         PrimaryDrawerItem item3 = new PrimaryDrawerItem().withName("收藏").withIcon(GoogleMaterial
                 .Icon.gmd_favorite).withIdentifier(2);
 
-        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withName("关于").withIcon(GoogleMaterial
-                .Icon.gmd_settings_applications).withIdentifier(3).withSelectable(false);
+        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withName("关于").withIcon(R.drawable
+                .guanyu).withIdentifier(3).withSelectable(false);
 
 
         drawer = new DrawerBuilder().withActionBarDrawerToggle(false).withActivity(this)
                 .withToolbar(toolbar).withAccountHeader(header).addDrawerItems(new
                         SecondaryDrawerItem().withName("资讯"), item1, item2, new DividerDrawerItem
-                        (), new SecondaryDrawerItem().withName("个人"), item3, new DividerDrawerItem
-                        (),new SecondaryDrawerItem().withName("系统"), item4).build();
+                        (), new SecondaryDrawerItem().withName("个人"), item3, new
+                        DividerDrawerItem(), new SecondaryDrawerItem().withName("系统"), item4)
+                .build();
         drawer.setSelection(0);
         drawer.setOnDrawerItemClickListener((view, position, drawerItem) -> {
             drawer.closeDrawer();
@@ -233,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
                             favFragment).commit();
                     break;
                 case 3:
-                    startActivity(new Intent(MainActivity.this,AboutActivity.class));
+                    startActivity(new Intent(MainActivity.this, AboutActivity.class));
                     break;
                 default:
                     break;

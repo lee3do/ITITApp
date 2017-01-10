@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 import cn.bingoogolapple.refreshlayout.BGANormalRefreshViewHolder;
 import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
 import cn.bingoogolapple.refreshlayout.BGARefreshViewHolder;
+import cn.trinea.android.common.util.StringUtils;
 import cn.trinea.android.common.util.ToastUtils;
 import io.itit.domain.Item;
 import io.itit.http.HttpUtils;
@@ -36,6 +37,7 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
     int pos = 1;
 
     private NewsAdapter mAdapter;
+    String query="";
 
 
     @Override
@@ -104,7 +106,29 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
                 }
             }, error -> {
                 Logger.e(error.getLocalizedMessage());
-              //  ToastUtils.show(getActivity(), "获取文章失败!");
+                //  ToastUtils.show(getActivity(), "获取文章失败!");
+                if (mRefreshLayout!=null) {
+                    mRefreshLayout.endRefreshing();
+                }
+            });
+        }else if (pos == 100) {
+            if (StringUtils.isEmpty(query)) {
+                return;
+            }
+            HttpUtils.appApis.searchNews(index,query).subscribeOn(Schedulers.io()).observeOn
+                    (AndroidSchedulers.mainThread()).subscribe(info -> {
+                if (info.getItems().size() == 0) {
+                    ToastUtils.show(getActivity(), "搜索结果为空!");
+                } else {
+                    mAdapter.updateNewsList(info.getItems(), index == 0);
+                    index+= info.getItems().size();
+                }
+                if (mRefreshLayout!=null) {
+                    mRefreshLayout.endRefreshing();
+                }
+            }, error -> {
+                Logger.e(error.getLocalizedMessage());
+                //  ToastUtils.show(getActivity(), "获取文章失败!");
                 if (mRefreshLayout!=null) {
                     mRefreshLayout.endRefreshing();
                 }
@@ -178,5 +202,10 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
     public boolean onBGARefreshLayoutBeginLoadingMore(BGARefreshLayout refreshLayout) {
         loadList(index);
         return false;
+    }
+
+    public void setSearcheArgs(String query) {
+        this.query = query;
+        loadList(0);
     }
 }
