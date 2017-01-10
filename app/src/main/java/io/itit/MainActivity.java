@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
     Drawer drawer;
     @Bind(R.id.big_profile_image)
     CircleImageView bigProfileImage;
+    @Bind(R.id.show_more)
+    ImageView showMore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,13 @@ public class MainActivity extends AppCompatActivity {
         initFragments();
         EventBus.getDefault().register(this);
         profileImage.setOnClickListener(v -> profileClick());
+        showMore.setOnClickListener(v -> {
+            if (drawer.isDrawerOpen()) {
+                drawer.closeDrawer();
+            } else {
+                drawer.openDrawer();
+            }
+        });
     }
 
     private void initFragments() {
@@ -298,13 +307,14 @@ public class MainActivity extends AppCompatActivity {
         float toY = profileImage.getY();
         float fromY = bigProfileImage.getY();
 
-        ObjectAnimator animatorX = ObjectAnimator.ofFloat(bigProfileImage, "translationX",0, toX-fromX-180);
+        ObjectAnimator animatorX = ObjectAnimator.ofFloat(bigProfileImage, "translationX", 0, toX
+                - fromX - 180);
 
-        ObjectAnimator animatorY = ObjectAnimator.ofFloat(bigProfileImage, "translationY",0, toY-fromY-50);
+        ObjectAnimator animatorY = ObjectAnimator.ofFloat(bigProfileImage, "translationY", 0, toY
+                - fromY - 50);
 
         ObjectAnimator scaleX = ObjectAnimator.ofFloat(bigProfileImage, "scaleX", 1f, 0.3f);
         ObjectAnimator scaleY = ObjectAnimator.ofFloat(bigProfileImage, "scaleY", 1f, 0.3f);
-
 
 
         AnimatorSet set3 = new AnimatorSet();
@@ -324,7 +334,8 @@ public class MainActivity extends AppCompatActivity {
                 bigProfileImage.setX(fromX);
                 bigProfileImage.setY(fromY);
                 ImageLoader.getInstance().displayImage(headUrl.getValue(), profileImage);
-                ObjectAnimator animator = ObjectAnimator.ofFloat(profileImage, "translationX",0, -20,0,20,0);
+                ObjectAnimator animator = ObjectAnimator.ofFloat(profileImage, "translationX", 0,
+                        -20, 0, 20, 0);
                 animator.setDuration(1000);
                 animator.start();
             }
