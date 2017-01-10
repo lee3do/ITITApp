@@ -107,7 +107,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             item.setImgUrl("");
         } else {
             holder.headImage.setVisibility(View.VISIBLE);
-            imageLoader.displayImage(item.getImgUrl(), holder.headImage, options, new
+            imageLoader.displayImage(item.getImgUrl().replace("https","http"), holder.headImage, options, new
                     ImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
