@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -181,11 +180,11 @@ public class MainActivity extends AppCompatActivity {
                 profile.withIcon(Uri.parse(headUrl.getValue()));
                 ImageLoader.getInstance().displayImage(headUrl.getValue(), profileImage);
             } else {
-                profile.withIcon(R.drawable.ic_launcher);
+                profile.withIcon(R.drawable.boy);
             }
             hasLogin = true;
         } else {
-            ((ProfileDrawerItem) profile).withName(uuid).withIcon(R.drawable.ic_launcher);
+            ((ProfileDrawerItem) profile).withName("游客").withIcon(R.drawable.boy);
         }
 
         header = new AccountHeaderBuilder().withSelectionListEnabledForSingleProfile(false)
@@ -205,23 +204,29 @@ public class MainActivity extends AppCompatActivity {
             }
         }).withTextColor(Color.BLACK).withCompactStyle(true).build();
 
-        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withName("推荐").withIcon(GoogleMaterial
-                .Icon.gmd_android).withIdentifier(0);
+        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withName("推荐").withIcon(R.drawable
+                .tuijian).withIdentifier(0);
 
-        PrimaryDrawerItem item2 = new PrimaryDrawerItem().withName("最新").withIcon(GoogleMaterial
-                .Icon.gmd_new_releases).withIdentifier(1);
-        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withName("收藏").withIcon(GoogleMaterial
-                .Icon.gmd_favorite).withIdentifier(2);
+        PrimaryDrawerItem item2 = new PrimaryDrawerItem().withName("最新").withIcon(R.drawable
+                .zuixin).withIdentifier(1);
+        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withName("收藏").withIcon(R.drawable
+                .shoucang).withIdentifier(2);
 
         PrimaryDrawerItem item4 = new PrimaryDrawerItem().withName("关于").withIcon(R.drawable
                 .guanyu).withIdentifier(3).withSelectable(false);
+
+        PrimaryDrawerItem item5 = new PrimaryDrawerItem().withName("退出登录").withIcon(R.drawable
+                .exit).withIdentifier(4).withSelectable(false);
+
+        PrimaryDrawerItem item6 = new PrimaryDrawerItem().withName("清除缓存").withIcon(R.drawable
+                .clear).withIdentifier(5).withSelectable(false);
 
 
         drawer = new DrawerBuilder().withActionBarDrawerToggle(false).withActivity(this)
                 .withToolbar(toolbar).withAccountHeader(header).addDrawerItems(new
                         SecondaryDrawerItem().withName("资讯"), item1, item2, new DividerDrawerItem
                         (), new SecondaryDrawerItem().withName("个人"), item3, new
-                        DividerDrawerItem(), new SecondaryDrawerItem().withName("系统"), item4)
+                        DividerDrawerItem(), new SecondaryDrawerItem().withName("系统"), item6,item4,item5)
                 .build();
         drawer.setSelection(0);
         drawer.setOnDrawerItemClickListener((view, position, drawerItem) -> {
@@ -242,6 +247,30 @@ public class MainActivity extends AppCompatActivity {
                 case 3:
                     startActivity(new Intent(MainActivity.this, AboutActivity.class));
                     break;
+                case 4:
+                    new MaterialDialog.Builder(MainActivity.this).theme(Theme.LIGHT).title("确定登出吗?")
+                            .positiveText("确定").negativeText("取消").onPositive((dialog, which) -> {
+                        DBHelper.deleteKey("USER");
+                        DBHelper.deleteKey("NAME");
+                        DBHelper.deleteKey("HEAD");
+                        uuid = UUID.randomUUID().toString();
+                        ((ProfileDrawerItem) profile).withName("游客").withIcon(R.drawable.boy);
+                        runOnUiThread(() -> header.updateProfile(profile));
+                        hasLogin = false;
+
+                        profileImage.setImageResource(R.drawable.boy);
+                        dialog.dismiss();
+                    }).onNegative((dialog, which) -> dialog.dismiss()).show();
+                    break;
+                case 5:
+                    new MaterialDialog.Builder(MainActivity.this).theme(Theme.LIGHT).title("确定清除缓存吗?")
+                            .positiveText("确定").negativeText("取消").onPositive((dialog, which) -> {
+                        ImageLoader.getInstance().clearDiskCache();
+                        ImageLoader.getInstance().clearMemoryCache();
+                        Utils.clearWebViewCache(getApplicationContext());
+                        dialog.dismiss();
+                    }).onNegative((dialog, which) -> dialog.dismiss()).show();
+                    break;
                 default:
                     break;
             }
@@ -261,19 +290,7 @@ public class MainActivity extends AppCompatActivity {
             IWXAPI api = ITITApplication.msgApi;
             api.sendReq(req);
         } else {
-            new MaterialDialog.Builder(MainActivity.this).theme(Theme.LIGHT).title("确定登出吗?")
-                    .positiveText("确定").negativeText("取消").onPositive((dialog, which) -> {
-                DBHelper.deleteKey("USER");
-                DBHelper.deleteKey("NAME");
-                DBHelper.deleteKey("HEAD");
-                uuid = UUID.randomUUID().toString();
-                ((ProfileDrawerItem) profile).withName(uuid).withIcon(R.drawable.ic_launcher);
-                runOnUiThread(() -> header.updateProfile(profile));
-                hasLogin = false;
-
-                profileImage.setImageResource(R.drawable.boy);
-                dialog.dismiss();
-            }).onNegative((dialog, which) -> dialog.dismiss()).show();
+            ToastUtils.show(this,"陪君醉笑三千场，不诉离殇");
         }
     }
 

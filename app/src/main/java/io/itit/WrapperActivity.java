@@ -253,6 +253,7 @@ public class WrapperActivity extends SwipeBackActivity {
         ws.setJavaScriptEnabled(true);
         // 设置 缓存模式
         ws.setAppCacheEnabled(true);
+
         String appCacheDir = webView.getContext().getDir("cache", Context.MODE_PRIVATE).getPath();
         ws.setAppCachePath(appCacheDir);
         ws.setCacheMode(WebSettings.LOAD_DEFAULT);

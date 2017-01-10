@@ -31,7 +31,7 @@
         android:textSize="17sp"/>
 
     <TextView
-        android:text="「醉笑陪君三千场,不诉离殇」"
+        android:text="「吾生也有涯，而知也无涯」"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

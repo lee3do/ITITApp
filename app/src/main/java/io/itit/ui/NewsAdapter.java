@@ -99,7 +99,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             holder.content.setVisibility(View.GONE);
         } else {
             holder.content.setVisibility(View.VISIBLE);
-            holder.content.setText(item.getDesc().replace(" ",""));
+            holder.content.setText(item.getDesc().replace(" ","").replace("\t",""));
         }
 
         if (StringUtils.isEmpty(item.getImgUrl()) || !isImage(item.getImgUrl())) {
