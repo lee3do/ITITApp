@@ -120,7 +120,6 @@
 
     <style name="baseCardTextStyle" parent="baseLayoutParam">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_toLeftOf">@id/card_share_overflow</item>
         <item name="android:layout_toRightOf">@id/thumbnail_image</item>
         <item name="android:layout_below">@id/title</item>
         <item name="android:paddingLeft">8dp</item>
@@ -142,9 +141,8 @@
     </style>
 
     <style name="cardOverflowIconStyle">
-        <item name="android:padding">5dp</item>
-        <item name="android:layout_height">25dp</item>
-        <item name="android:layout_width">25dp</item>
+        <item name="android:layout_height">15dp</item>
+        <item name="android:layout_width">15dp</item>
         <item name="android:src">@drawable/icon_hot</item>
     </style>
 

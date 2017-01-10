@@ -137,37 +137,9 @@ public class MainActivity extends AppCompatActivity {
         bundle3.putInt("POS", 3);
         favFragment.setArguments(bundle3);
 
-
         getSupportFragmentManager().beginTransaction().replace(R.id.content, recommendFragment)
                 .commit();
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        SearchView searchView = (SearchView) menu.findItem(R.id.action_go_to_search)
-//                .getActionView();
-//        SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
-//        searchView.setSearchableInfo(info);
-//
-//        searchView.setIconified(true);
-//        searchView.setIconifiedByDefault(false);
-//
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return true;
-//            }
-//        });
-//
-//        return true;
-//    }
 
     private void initDrawer(Bundle savedInstanceState) {
         profile = new ProfileDrawerItem().withEmail("ITIT");
@@ -268,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
                         ImageLoader.getInstance().clearDiskCache();
                         ImageLoader.getInstance().clearMemoryCache();
                         Utils.clearWebViewCache(getApplicationContext());
+                        ToastUtils.show(getApplicationContext(),"缓存清除成功！");
                         dialog.dismiss();
                     }).onNegative((dialog, which) -> dialog.dismiss()).show();
                     break;

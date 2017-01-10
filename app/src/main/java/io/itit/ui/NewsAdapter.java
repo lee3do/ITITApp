@@ -93,7 +93,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
         DateFormat df = SimpleDateFormat.getDateInstance();
         holder.time.setText(df.format(new Date(item.getFetchDate())));
         holder.authorText.setText(item.getAuthor());
-        holder.readNumText.setText(item.getViewCount() + "");
+        holder.readNumText.setText(item.getViewCount() + " 阅读");
 
         if (StringUtils.isEmpty(item.getDesc())) {
             holder.content.setVisibility(View.GONE);
@@ -170,7 +170,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
         public TextView title;
         public TextView time;
         public TextView content;
-        public ImageView overflow;
         public ImageView headImage;
         public TextView authorText;
         public TextView readNumText;
@@ -185,7 +184,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             newsImage = (ImageView) v.findViewById(R.id.thumbnail_image);
             title = (TextView) v.findViewById(R.id.title);
             content = (TextView) v.findViewById(R.id.content);
-            overflow = (ImageView) v.findViewById(R.id.card_share_overflow);
             authorText = (TextView) v.findViewById(R.id.author);
             readNumText = (TextView) v.findViewById(R.id.read_num);
             time = (TextView) v.findViewById(R.id.time);
