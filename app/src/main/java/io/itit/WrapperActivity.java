@@ -27,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.orhanobut.logger.Logger;
@@ -104,7 +106,7 @@ public class WrapperActivity extends SwipeBackActivity {
         webView.loadUrl(url);
 
         initActionBar();
-        refreshButton.setOnClickListener(v->{
+        refreshButton.setOnClickListener(v -> {
             webView.loadUrl(url);
         });
 
@@ -271,6 +273,9 @@ public class WrapperActivity extends SwipeBackActivity {
     }
 
     WebViewClient client = new WebViewClient() {
+        boolean error = false;
+        MaterialDialog progressDialog;
+
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             if (url.startsWith("mailto:") || url.startsWith("tel:")) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -286,14 +291,18 @@ public class WrapperActivity extends SwipeBackActivity {
             webView.loadUrl("javascript:MyApp.resize(document.body.getBoundingClientRect()" + ""
                     + ".height)");
             super.onPageFinished(view, url);
-            scrollView.setVisibility(View.VISIBLE);
-            noNetworkView.setVisibility(View.GONE);
             WrapperActivity.this.url = url;
+            Logger.d("load finish");
+            if (!error) {
+                scrollView.setVisibility(View.VISIBLE);
+            }
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
 //            if (rotateHeaderWebViewFrame != null) {
 //                rotateHeaderWebViewFrame.refreshComplete();
 //            }
         }
-
 
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
@@ -304,8 +313,10 @@ public class WrapperActivity extends SwipeBackActivity {
         public void onReceivedError(WebView view, int errorCode, String description, String
                 failingUrl) {
             super.onReceivedError(view, errorCode, description, failingUrl);
+            Logger.d("onReceivedError");
+            error = true;
 //            view.loadUrl("file:///android_asset/webroot/error.html");
-            ToastUtils.show(WrapperActivity.this,"网络异常，请重试！");
+            ToastUtils.show(WrapperActivity.this, "网络异常，请重试！");
             scrollView.setVisibility(View.GONE);
             noNetworkView.setVisibility(View.VISIBLE);
         }
@@ -313,6 +324,11 @@ public class WrapperActivity extends SwipeBackActivity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
+            error = false;
+            noNetworkView.setVisibility(View.GONE);
+            progressDialog = new MaterialDialog.Builder(WrapperActivity.this).content("加载中")
+                    .theme(Theme.LIGHT).progress(true, 0).show();
+            ;
         }
     };
 
