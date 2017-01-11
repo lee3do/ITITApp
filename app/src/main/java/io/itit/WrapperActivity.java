@@ -110,6 +110,7 @@ public class WrapperActivity extends SwipeBackActivity {
             webView.loadUrl(url);
         });
 
+
         HttpUtils.appApis.isFav(ITITApplication.uuid, id).subscribeOn(Schedulers.io()).observeOn
                 (AndroidSchedulers.mainThread()).subscribe(info -> {
             isLiked = info.isIsLike();
@@ -122,7 +123,7 @@ public class WrapperActivity extends SwipeBackActivity {
                 }
             });
         }, error -> {
-            Logger.e(error.getLocalizedMessage());
+            Logger.d(error.getLocalizedMessage());
         });
 
     }
@@ -149,9 +150,9 @@ public class WrapperActivity extends SwipeBackActivity {
             appBar.setExpanded(false, false);
             scrollView.setNestedScrollingEnabled(false);
         }
-
-
     }
+
+    String imageJs = "(function() {  var anchors = document.querySelectorAll('img');  \n" + "\t var elem;\n" + "\t var srcs = [];\n" +"for (var i = 0; i < anchors.length; i++) {\n" + "     \telem= anchors[i];\n" + "\t\ttemp = elem.getAttribute('data-echo');\n" + "\t\tif(!temp){\n" + "\t\t\ttemp = elem.getAttribute('src');\n" + "\t\t}\n" + "     \tsrcs.push(temp);\n" + "     }"+ "     for (var i = 0; i < anchors.length; i++) {\n" + "     \telem= anchors[i];\n" + "     \t(function(el){\n" + "     \t\tel.addEventListener(\"click\", function(){\n" + "       \t\t\tMyApp.showImage(el.getAttribute(\"src\"),srcs);\n" + "     \t\t});\n" + "     \t})(elem);\n" + " \t} })();";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -272,6 +273,28 @@ public class WrapperActivity extends SwipeBackActivity {
         });
     }
 
+    @JavascriptInterface
+    public void showImage(String url,String[] urls) {
+        if (StringUtils.isEmpty(url) || url.equals("undefined")) {
+            Logger.d("empty url");
+            return;
+        }
+        Logger.d("url" + url);
+
+        int index = 0;
+        for (int i = 0; i < urls.length; i++) {
+            if (urls[i].equals(url)) {
+                index = i;
+                break;
+            }
+        }
+        Intent intent = new Intent(this, ShowImageActivity.class);
+        intent.putExtra("URL",urls);
+        intent.putExtra("INDEX",1);
+        startActivity(intent);
+    }
+
+
     WebViewClient client = new WebViewClient() {
         boolean error = false;
         MaterialDialog progressDialog;
@@ -288,8 +311,9 @@ public class WrapperActivity extends SwipeBackActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            webView.loadUrl("javascript:MyApp.resize(document.body.getBoundingClientRect()" + ""
-                    + ".height)");
+            webView.evaluateJavascript(imageJs, value -> {
+
+            });
             super.onPageFinished(view, url);
             WrapperActivity.this.url = url;
             Logger.d("load finish");
@@ -299,14 +323,12 @@ public class WrapperActivity extends SwipeBackActivity {
             if (progressDialog != null) {
                 progressDialog.dismiss();
             }
-//            if (rotateHeaderWebViewFrame != null) {
-//                rotateHeaderWebViewFrame.refreshComplete();
-//            }
         }
 
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            handler.proceed(); // Ignore SSL certificate errors
+            Logger.e(error.toString());
+            handler.proceed();
         }
 
         @Override

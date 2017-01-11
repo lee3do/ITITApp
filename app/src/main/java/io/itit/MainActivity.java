@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -78,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView showMore;
     @Bind(R.id.search_bar)
     RelativeLayout searchBar;
+    @Bind(R.id.appbar)
+    AppBarLayout appbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
                 drawer.openDrawer();
             }
         });
-        searchBar.setOnClickListener(v->{
-            startActivity(new Intent(MainActivity.this,SearchActivity.class));
+        searchBar.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, SearchActivity.class));
         });
     }
 
@@ -195,11 +198,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         drawer = new DrawerBuilder().withActionBarDrawerToggle(false).withActivity(this)
-                .withToolbar(toolbar).withAccountHeader(header).addDrawerItems(new
-                        SecondaryDrawerItem().withName("资讯"), item1, item2, new DividerDrawerItem
-                        (), new SecondaryDrawerItem().withName("个人"), item3, new
-                        DividerDrawerItem(), new SecondaryDrawerItem().withName("系统"), item6,item4,item5)
-                .build();
+                .withAccountHeader(header).addDrawerItems(new SecondaryDrawerItem().withName
+                        ("资讯"), item1, item2, new DividerDrawerItem(), new SecondaryDrawerItem()
+                        .withName("个人"), item3, new DividerDrawerItem(), new SecondaryDrawerItem
+                        ().withName("系统"), item6, item4, item5).build();
         drawer.setSelection(0);
         drawer.setOnDrawerItemClickListener((view, position, drawerItem) -> {
             drawer.closeDrawer();
@@ -220,8 +222,9 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, AboutActivity.class));
                     break;
                 case 4:
-                    new MaterialDialog.Builder(MainActivity.this).theme(Theme.LIGHT).title("确定登出吗?")
-                            .positiveText("确定").negativeText("取消").onPositive((dialog, which) -> {
+                    new MaterialDialog.Builder(MainActivity.this).theme(Theme.LIGHT).title
+                            ("确定登出吗?").positiveText("确定").negativeText("取消").onPositive((dialog,
+                                                                                         which) -> {
                         DBHelper.deleteKey("USER");
                         DBHelper.deleteKey("NAME");
                         DBHelper.deleteKey("HEAD");
@@ -235,12 +238,13 @@ public class MainActivity extends AppCompatActivity {
                     }).onNegative((dialog, which) -> dialog.dismiss()).show();
                     break;
                 case 5:
-                    new MaterialDialog.Builder(MainActivity.this).theme(Theme.LIGHT).title("确定清除缓存吗?")
-                            .positiveText("确定").negativeText("取消").onPositive((dialog, which) -> {
+                    new MaterialDialog.Builder(MainActivity.this).theme(Theme.LIGHT).title
+                            ("确定清除缓存吗?").positiveText("确定").negativeText("取消").onPositive(
+                                    (dialog, which) -> {
                         ImageLoader.getInstance().clearDiskCache();
                         ImageLoader.getInstance().clearMemoryCache();
                         Utils.clearWebViewCache(getApplicationContext());
-                        ToastUtils.show(getApplicationContext(),"缓存清除成功！");
+                        ToastUtils.show(getApplicationContext(), "缓存清除成功！");
                         dialog.dismiss();
                     }).onNegative((dialog, which) -> dialog.dismiss()).show();
                     break;
@@ -263,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
             IWXAPI api = ITITApplication.msgApi;
             api.sendReq(req);
         } else {
-            ToastUtils.show(this,"陪君醉笑三千场，不诉离殇");
+            ToastUtils.show(this, "陪君醉笑三千场，不诉离殇");
         }
     }
 

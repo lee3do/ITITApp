@@ -39,7 +39,7 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
     int pos = 1;
 
     private NewsAdapter mAdapter;
-    String query="";
+    String query = "";
     MaterialDialog loadingDialog;
 
 
@@ -52,6 +52,8 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
             pos = getArguments().getInt("POS");
             setRetainInstance(true);
         }
+
+
     }
 
     private void loadList(int pageIndex) {
@@ -64,15 +66,15 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
                     ToastUtils.show(getActivity(), "没有更多文章啦!");
                 } else {
                     mAdapter.updateNewsList(info.getItems(), index == 0);
-                    index+= info.getItems().size();
+                    index += info.getItems().size();
                 }
-                if (mRefreshLayout!=null) {
+                if (mRefreshLayout != null) {
                     mRefreshLayout.endRefreshing();
                 }
             }, error -> {
                 Logger.e(error.getLocalizedMessage());
-             //   ToastUtils.show(getActivity(), "获取文章失败!");
-                if (mRefreshLayout!=null) {
+                //   ToastUtils.show(getActivity(), "获取文章失败!");
+                if (mRefreshLayout != null) {
                     mRefreshLayout.endRefreshing();
                 }
             });
@@ -83,47 +85,47 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
                     ToastUtils.show(getActivity(), "没有更多文章啦!");
                 } else {
                     mAdapter.updateNewsList(info.getItems(), index == 0);
-                    index+= info.getItems().size();
+                    index += info.getItems().size();
                 }
-                if (mRefreshLayout!=null) {
+                if (mRefreshLayout != null) {
                     mRefreshLayout.endRefreshing();
                 }
             }, error -> {
                 Logger.e(error.getLocalizedMessage());
-               // ToastUtils.show(getActivity(), "获取文章失败!");
-                if (mRefreshLayout!=null) {
+                // ToastUtils.show(getActivity(), "获取文章失败!");
+                if (mRefreshLayout != null) {
                     mRefreshLayout.endRefreshing();
                 }
             });
         } else if (pos == 3) {
-            HttpUtils.appApis.getLikes(ITITApplication.uuid,index).subscribeOn(Schedulers.io()).observeOn
-                    (AndroidSchedulers.mainThread()).subscribe(info -> {
+            HttpUtils.appApis.getLikes(ITITApplication.uuid, index).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(info -> {
                 if (info.getItems().size() == 0) {
                     ToastUtils.show(getActivity(), "没有更多文章啦!");
                 } else {
                     mAdapter.updateNewsList(info.getItems(), index == 0);
-                    index+= info.getItems().size();
+                    index += info.getItems().size();
                 }
-                if (mRefreshLayout!=null) {
+                if (mRefreshLayout != null) {
                     mRefreshLayout.endRefreshing();
                 }
             }, error -> {
                 Logger.e(error.getLocalizedMessage());
                 //  ToastUtils.show(getActivity(), "获取文章失败!");
-                if (mRefreshLayout!=null) {
+                if (mRefreshLayout != null) {
                     mRefreshLayout.endRefreshing();
                 }
             });
-        }else if (pos == 100) {
+        } else if (pos == 100) {
             if (StringUtils.isEmpty(query)) {
                 return;
             }
-            if (index==0) {
-                mAdapter.setNewsList(new ArrayList<>(),true);
+            if (index == 0) {
+                mAdapter.setNewsList(new ArrayList<>(), true);
             }
-            HttpUtils.appApis.searchNews(index,query).subscribeOn(Schedulers.io()).observeOn
+            HttpUtils.appApis.searchNews(index, query).subscribeOn(Schedulers.io()).observeOn
                     (AndroidSchedulers.mainThread()).subscribe(info -> {
-                if (loadingDialog!=null) {
+                if (loadingDialog != null) {
                     loadingDialog.dismiss();
                 }
                 if (info.getItems().size() == 0) {
@@ -134,19 +136,19 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
                     }
                 } else {
                     mAdapter.updateNewsList(info.getItems(), index == 0);
-                    index+= info.getItems().size();
+                    index += info.getItems().size();
                 }
-                if (mRefreshLayout!=null) {
+                if (mRefreshLayout != null) {
                     mRefreshLayout.endRefreshing();
                 }
             }, error -> {
-                if (loadingDialog!=null) {
+                if (loadingDialog != null) {
                     loadingDialog.dismiss();
                     ToastUtils.show(getActivity(), "搜索结果为空!");
                 }
                 Logger.e(error.getLocalizedMessage());
                 //  ToastUtils.show(getActivity(), "获取文章失败!");
-                if (mRefreshLayout!=null) {
+                if (mRefreshLayout != null) {
                     mRefreshLayout.endRefreshing();
                 }
             });
@@ -202,6 +204,7 @@ public class MainActivityFragment extends Fragment implements BGARefreshLayout
 
         mAdapter = new NewsAdapter(newsList, getActivity());
         mRecyclerView.setAdapter(mAdapter);
+
     }
 
     @Override
