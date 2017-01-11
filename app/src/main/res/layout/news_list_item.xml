@@ -32,15 +32,12 @@
                 android:paddingLeft="5dp"
                 android:text="标题"/>
 
-
-
-
         </RelativeLayout>
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="140dp"
-            card_view:srcCompat="@drawable/header"
+            card_view:srcCompat="@drawable/blank"
             android:scaleType="centerCrop"
             android:visibility="gone"
             android:id="@+id/head_image"/>

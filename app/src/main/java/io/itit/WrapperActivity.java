@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -127,7 +128,8 @@ public class WrapperActivity extends SwipeBackActivity {
         toolbar.setTitle("  ");
         if (!StringUtils.isEmpty(ITITApplication.displayedItem.getImgUrl())) {
             showHeadFirst = true;
-            imageLoader.displayImage(ITITApplication.displayedItem.getImgUrl().replace("https:","http:"), headImage, options);
+            imageLoader.displayImage(ITITApplication.displayedItem.getImgUrl().replace("https:",
+                    "http:"), headImage, options);
 //        mCollapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.actionbarTextStyle);
 //        mCollapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.actionbarTextStyle);
         } else {
@@ -222,31 +224,6 @@ public class WrapperActivity extends SwipeBackActivity {
         }).open(config);
     }
 
-//    private void initPullToRefresh() {
-//        StoreHouseHeader header = new StoreHouseHeader(this);
-//        header.initWithString("ITIT");
-//        rotateHeaderWebViewFrame.setHeaderView(header);
-//        rotateHeaderWebViewFrame.addPtrUIHandler(header);
-//
-//        rotateHeaderWebViewFrame.disableWhenHorizontalMove(true);
-//
-//        rotateHeaderWebViewFrame.setPtrHandler(new PtrHandler() {
-//            @Override
-//            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-//                boolean canRefresh = PtrDefaultHandler.checkContentCanBePulledDown(frame,
-//                        content, header);
-//                return canRefresh;
-//            }
-//
-//            @Override
-//            public void onRefreshBegin(PtrFrameLayout frame) {
-//                webView.loadUrl(url);
-//                rotateHeaderWebViewFrame.postDelayed(() -> rotateHeaderWebViewFrame
-//                        .refreshComplete(), 10000);//默认10s关闭
-//            }
-//        });
-//    }
-
     private void initWebview() {
         if (webView == null) return;
         WebSettings ws = webView.getSettings();
@@ -270,6 +247,16 @@ public class WrapperActivity extends SwipeBackActivity {
         ws.setUserAgentString(ua + "itit");
         ws.setJavaScriptCanOpenWindowsAutomatically(true);
         webView.setWebViewClient(client);
+        webView.addJavascriptInterface(this, "MyApp");
+    }
+
+    @JavascriptInterface
+    public void resize(final float height) {
+        WrapperActivity.this.runOnUiThread(() -> {
+//            webView.setLayoutParams(new LinearLayout.LayoutParams(getResources()
+//                    .getDisplayMetrics().widthPixels, (int) (height * getResources()
+//                    .getDisplayMetrics().density)));
+        });
     }
 
     WebViewClient client = new WebViewClient() {
@@ -285,12 +272,15 @@ public class WrapperActivity extends SwipeBackActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
+            webView.loadUrl("javascript:MyApp.resize(document.body.getBoundingClientRect()" + "" +
+                    ".height)");
             super.onPageFinished(view, url);
             WrapperActivity.this.url = url;
 //            if (rotateHeaderWebViewFrame != null) {
 //                rotateHeaderWebViewFrame.refreshComplete();
 //            }
         }
+
 
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {

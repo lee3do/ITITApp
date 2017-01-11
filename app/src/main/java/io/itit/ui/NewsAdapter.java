@@ -39,9 +39,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
     Context mContext;
 
     private ImageLoader imageLoader = ImageLoader.getInstance();
-    private DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnFail(R
-            .drawable.noimage).showImageForEmptyUri(R.drawable.noimage).cacheInMemory(true)
-            .cacheOnDisk(true).considerExifParams(true).build();
+    private DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R
+            .drawable.blank).showImageOnFail(R.drawable.noimage).showImageForEmptyUri(R
+            .drawable.noimage).cacheInMemory(true).cacheOnDisk(true).considerExifParams(true)
+            .build();
     private ImageLoadingListener animateFirstListener = new AnimateFirstDisplayListener();
 
     public NewsAdapter(List<Item.ItemsBean> newsList, Context context) {
@@ -99,7 +100,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             holder.content.setVisibility(View.GONE);
         } else {
             holder.content.setVisibility(View.VISIBLE);
-            holder.content.setText(item.getDesc().replace(" ","").replace("\t",""));
+            holder.content.setText(item.getDesc().replace(" ", "").replace("\t", ""));
         }
 
         if (StringUtils.isEmpty(item.getImgUrl()) || !isImage(item.getImgUrl())) {
@@ -107,8 +108,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
             item.setImgUrl("");
         } else {
             holder.headImage.setVisibility(View.VISIBLE);
-            imageLoader.displayImage(item.getImgUrl().replace("https","http"), holder.headImage, options, new
-                    ImageLoadingListener() {
+
+            imageLoader.displayImage(item.getImgUrl().replace("https", "http"), holder.headImage,
+                    options, new ImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
 
@@ -122,7 +124,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.CardViewHolder
 
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                    if (loadedImage.getWidth()<300||loadedImage.getHeight()<100) {
+                    if (loadedImage.getWidth() < 300 || loadedImage.getHeight() < 100) {
                         holder.headImage.setVisibility(View.GONE);
                     }
                 }
