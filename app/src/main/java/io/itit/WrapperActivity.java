@@ -15,13 +15,16 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -37,6 +40,7 @@ import com.umeng.socialize.shareboard.ShareBoardConfig;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.trinea.android.common.util.StringUtils;
+import cn.trinea.android.common.util.ToastUtils;
 import io.itit.http.HttpUtils;
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 import rx.android.schedulers.AndroidSchedulers;
@@ -46,6 +50,10 @@ import static io.itit.http.HttpUtils.iconUrl;
 
 public class WrapperActivity extends SwipeBackActivity {
 
+    @Bind(R.id.refresh_button)
+    Button refreshButton;
+    @Bind(R.id.no_network_view)
+    RelativeLayout noNetworkView;
     private ImageLoader imageLoader = ImageLoader.getInstance();
     private DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R
             .drawable.noimage).showImageOnFail(R.drawable.noimage).showImageForEmptyUri(R
@@ -96,6 +104,9 @@ public class WrapperActivity extends SwipeBackActivity {
         webView.loadUrl(url);
 
         initActionBar();
+        refreshButton.setOnClickListener(v->{
+            webView.loadUrl(url);
+        });
 
         HttpUtils.appApis.isFav(ITITApplication.uuid, id).subscribeOn(Schedulers.io()).observeOn
                 (AndroidSchedulers.mainThread()).subscribe(info -> {
@@ -272,9 +283,11 @@ public class WrapperActivity extends SwipeBackActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            webView.loadUrl("javascript:MyApp.resize(document.body.getBoundingClientRect()" + "" +
-                    ".height)");
+            webView.loadUrl("javascript:MyApp.resize(document.body.getBoundingClientRect()" + ""
+                    + ".height)");
             super.onPageFinished(view, url);
+            scrollView.setVisibility(View.VISIBLE);
+            noNetworkView.setVisibility(View.GONE);
             WrapperActivity.this.url = url;
 //            if (rotateHeaderWebViewFrame != null) {
 //                rotateHeaderWebViewFrame.refreshComplete();
@@ -291,7 +304,10 @@ public class WrapperActivity extends SwipeBackActivity {
         public void onReceivedError(WebView view, int errorCode, String description, String
                 failingUrl) {
             super.onReceivedError(view, errorCode, description, failingUrl);
-            view.loadUrl("file:///android_asset/webroot/error.html");
+//            view.loadUrl("file:///android_asset/webroot/error.html");
+            ToastUtils.show(WrapperActivity.this,"网络异常，请重试！");
+            scrollView.setVisibility(View.GONE);
+            noNetworkView.setVisibility(View.VISIBLE);
         }
 
         @Override
