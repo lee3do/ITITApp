@@ -319,6 +319,7 @@ public class WrapperActivity extends SwipeBackActivity {
             Logger.d("load finish");
             if (!error) {
                 scrollView.setVisibility(View.VISIBLE);
+                appBar.setVisibility(View.VISIBLE);
             }
             if (progressDialog != null) {
                 progressDialog.dismiss();
@@ -340,6 +341,7 @@ public class WrapperActivity extends SwipeBackActivity {
 //            view.loadUrl("file:///android_asset/webroot/error.html");
             ToastUtils.show(WrapperActivity.this, "网络异常，请重试！");
             scrollView.setVisibility(View.GONE);
+            appBar.setVisibility(View.GONE);
             noNetworkView.setVisibility(View.VISIBLE);
         }
 
@@ -350,7 +352,6 @@ public class WrapperActivity extends SwipeBackActivity {
             noNetworkView.setVisibility(View.GONE);
             progressDialog = new MaterialDialog.Builder(WrapperActivity.this).content("加载中")
                     .theme(Theme.LIGHT).progress(true, 0).show();
-            ;
         }
     };
 
