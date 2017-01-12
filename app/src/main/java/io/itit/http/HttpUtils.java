@@ -12,7 +12,7 @@ public class HttpUtils {
     public static Retrofit retrofit;
     public static AppApis appApis;
     public static String baseUrl = "https://api.itit.io/srv/feed/view/user/";
-    public static  String iconUrl = "http://itit.io:7001/srv/feed/favicon/";
+    public static String iconUrl = "http://itit.io:7001/srv/feed/favicon/";
 
     static {
         OkHttpClient client = new OkHttpClient.Builder().addNetworkInterceptor(chain -> {
